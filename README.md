@@ -1,12 +1,11 @@
 IP Calculator
 =============
-**version** = '0.1.0'
-**author:** Elena Jdanova [e-mail](ms.elenajdanova@gmail.com)
-
-About
-=====
 This JS library allows you to validate IP addresses and perform network calculations, based on the input.
 Supports both IPv4 and IPv6 CIDR notation.
+
+Release History
+===============
+*   0.0.1 Work in progress
 
 References
 ==========
@@ -15,4 +14,5 @@ References
 
 Licensing
 =========
-The code in this project is licensed under MIT license. 
+The code in this project is licensed under MIT license. See LICENSE for more information.  
+**author:** Elena Jdanova [e-mail](ms.elenajdanova@gmail.com)
