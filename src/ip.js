@@ -15,7 +15,7 @@ export class IP {
     constructor (address) {
         this.address = address;
         this.version = NaN;
-        this.isValid = parseInput();
+        this.isValid = _parseInput();
     }
 
     // Public methods
@@ -44,7 +44,7 @@ export class IP {
         let octs = this.address.split('.').reverse();
         let long = octs.reduce(function (long, octet, index) {
             return (octet * Math.pow(256, index) + long
-            )}, 0)
+            )}, 0);
         return long;
     }
 
@@ -96,7 +96,7 @@ export class IP {
     toCompressed() {
         return;
     }
-}//IP class end
+} //IP class end
 
 
 // Private methods
@@ -106,8 +106,21 @@ export class IP {
 * parseInput - Validates user input.
 * @return {boolean} whether input is valid or not
 */
-const parseInput = () => {
+const _parseInput = () => {
     return 'Hi';
+};
+
+const _isHex = (splittedAddr) => {
+    const regex = /^[0-9a-f]{4}$/i;
+    let m;
+    let arr = [];
+
+    splittedAddr.forEach( str => {
+        if ( (m = regex.exec(str)) !== null ) {
+            m.forEach( (hex) => { arr.push(hex);});
+        }
+    });
+    return splittedAddr.length === arr.length ? true : false;
 };
 
 
