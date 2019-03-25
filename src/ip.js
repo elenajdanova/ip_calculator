@@ -41,7 +41,11 @@ export class IP {
     * @return {integer} -> 2130706432
     */
     toLong () {
-
+        let octs = this.address.split('.').reverse();
+        let long = octs.reduce(function (long, octet, index) {
+            return (octet * Math.pow(256, index) + long
+            )}, 0)
+        return long;
     }
 
     /**
@@ -50,7 +54,13 @@ export class IP {
     * @return {string} -> "184.170.96.196"
     */
     toDottedNotation(long) {
-
+        return (
+            [ (long>>>24),
+              (long>>16 & 255),
+              (long>>8 & 255),
+              (long & 255)
+            ].join('.')
+        );
     }
 
     /**
