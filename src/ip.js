@@ -13,9 +13,8 @@ class IP {
     * @constructor
     */
     constructor (address) {
-        this.address = address;
-        this.version = NaN;
-        this.isValid = _parseInput();
+        this.address = _parseAddress(address);
+        this.version = _parseVersion(address);
     }
 
     // Public methods
@@ -99,22 +98,41 @@ class IP {
 } //IP class end
 
 
+
 // Private methods
 
 
 /**
-* parseInput - Validates user input.
+* parseAddress - Validates this IP address.
 * @private
-* @return {boolean} whether input is valid or not
+* @return {string} as a valid address
 */
-const _parseInput = () => {
-    return 'Hi';
+const _parseAddress = (addr) => {
+    // let splittedAddr = this.address.split('.');
+    // if (splittedAddr.length <= 4 && _isOctet(splitedAddr)) {
+    //     this.version = 4;
+    //     // toRepresentation()
+    //     return true;  //, blabla;
+    // } else {
+    //     throw new Error('Tips: Please, enter a valid IP address');
+    // }
+    //
+    return addr;
+};
+
+/**
+* parseVersion - Determind this IP version.
+* @private
+* @return {number}  -> 4 or 6
+*/
+const _parseVersion = (addr) => {
+    return 4;
 };
 
 /**
 * _isHextet - Validates hextets.
 * @private
-* @return {boolean} whether splitted address is valid IPv6 or not
+* @return {boolean} whether splitted address contains just hextets or not
 */
 const _isHextet = (splittedAddr) => {
     const regex = /^[0-9a-f]{4}$/i;
@@ -124,7 +142,23 @@ const _isHextet = (splittedAddr) => {
     return splittedAddr.every(isValid);
 };
 
+/**
+* _isOctet - Validates octets.
+* @private
+* @return {boolean} whether splitted address contains just octets or not
+*/
+const _isOctet = (splittedAddr) => {
+    const isValid = function (octet) {
+        return ( (octet <= 255 && octet >= 0) ? true : false );
+
+    };
+    return splittedAddr.every(isValid);
+};
 
 
-let ip = new IP('1234:7:56:9');
+
+
+let ip = new IP('1234.7.56.9');
 console.log(ip);
+console.log(ip.toLong());
+console.log(ip.toDottedNotation(ip.toLong()));
