@@ -1,3 +1,6 @@
+const IPv4MAX = Math.pow(2, 32) - 1;
+const IPv6MAX = Math.pow(2, 128) - 1;
+
 /**
 * Represents a single IP address v4 or v6.
 * @class IP
@@ -13,7 +16,8 @@ class IP {
     * @constructor
     */
     constructor (address) {
-        this.address = _parseAddress(address);
+        this.address = _parseAddress(address, this.version);
+        //this.address = address;
         this.version = _parseVersion(address);
     }
 
@@ -107,26 +111,37 @@ class IP {
 * @private
 * @return {string} as a valid address
 */
-const _parseAddress = (addr) => {
+const _parseAddress = (addr, ver) => {
     // let splittedAddr = this.address.split('.');
-    // if (splittedAddr.length <= 4 && _isOctet(splitedAddr)) {
+    // if (splittedAddr.length <= 4 && _isOctet(splittedAddr)) {
     //     this.version = 4;
-    //     // toRepresentation()
-    //     return true;  //, blabla;
     // } else {
     //     throw new Error('Tips: Please, enter a valid IP address');
     // }
-    //
+
     return addr;
 };
 
 /**
-* parseVersion - Determind this IP version.
+* parseVersion - Determins this IP version.
 * @private
 * @return {number}  -> 4 or 6
 */
 const _parseVersion = (addr) => {
-    return 4;
+    if (typeof addr === 'number') { // have an issue if number is inside quotes
+        if (addr > IPv6MAX) {
+            throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power');
+        } else if (addr <= IPv4MAX) {
+            return 4;
+        } else if (addr > IPv4MAX) {
+            return 6; }
+    } else if ( addr.includes('.') ) {
+        return 4;
+    } else if ( addr.includes(':') ) {
+        return 6;
+    } else {
+        throw new Error('Tips: Please, enter a valid IP address ("127.1.0.0" OR "127.1" OR 3098173636 OR "2001:0db8:0000:0000:0000:ff00:0042:8329" OR "2001:db8:0:0:0:ff00:42:8329")');
+    }
 };
 
 /**
@@ -158,7 +173,7 @@ const _isOctet = (splittedAddr) => {
 
 
 
-let ip = new IP('1234.7.56.9');
+let ip = new IP("fnjdsakil6");
 console.log(ip);
-console.log(ip.toLong());
-console.log(ip.toDottedNotation(ip.toLong()));
+//console.log(ip.toLong());
+//console.log(ip.toDottedNotation(ip.toLong()));
