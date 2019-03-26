@@ -7,7 +7,7 @@
 * @return {object} -> IP{address:"184.170.96.196", version: 4}
 */
 
-export class IP {
+class IP {
     /**
     * Represents an IP address.
     * @constructor
@@ -104,25 +104,27 @@ export class IP {
 
 /**
 * parseInput - Validates user input.
+* @private
 * @return {boolean} whether input is valid or not
 */
 const _parseInput = () => {
     return 'Hi';
 };
 
-const _isHex = (splittedAddr) => {
+/**
+* _isHextet - Validates hextets.
+* @private
+* @return {boolean} whether splitted address is valid IPv6 or not
+*/
+const _isHextet = (splittedAddr) => {
     const regex = /^[0-9a-f]{4}$/i;
-    let m;
-    let arr = [];
-
-    splittedAddr.forEach( str => {
-        if ( (m = regex.exec(str)) !== null ) {
-            m.forEach( (hex) => { arr.push(hex);});
-        }
-    });
-    return splittedAddr.length === arr.length ? true : false;
+    const isValid = function (hextet) {
+        return regex.test(hextet);
+    };
+    return splittedAddr.every(isValid);
 };
 
 
 
-let ip = new IP('123.7.56.9');
+let ip = new IP('1234:7:56:9');
+console.log(ip);
