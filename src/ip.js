@@ -5,6 +5,8 @@ const IPv6MAX = Math.pow(2, 128) - 1;
 * Represents a single IP address v4 or v6.
 * @class IP
 * @param {string} address
+* @param {number} [version = NaN]
+* @param {boolean} [isValid = null]
 *
 * host = new IP("184.170.96.196");
 * @return {object} -> IP{address:"184.170.96.196", version: 4}
@@ -15,10 +17,16 @@ class IP {
     * Represents an IP address.
     * @constructor
     */
-    constructor (address) {
-        this.address = _parseAddress(address, this.version);
-        //this.address = address;
-        this.version = _parseVersion(address);
+    constructor (address, version = NaN, isValid = null ) {
+        if (isValid === true) {
+            this.address = address;
+            this.version = version;
+            this.isValid = isValid;
+        } else {
+            this.version = _parseVersion(address);
+            this.address = _parseAddress(address, this.version);
+        }
+
     }
 
     // Public methods
@@ -56,7 +64,7 @@ class IP {
     * @param {integer} long
     * @return {string} -> "184.170.96.196"
     */
-    toDottedNotation(long) {
+    toDottedNotation(long, ver) {
         return (
             [ (long>>>24),
               (long>>16 & 255),
@@ -88,7 +96,7 @@ class IP {
     * @return {string} -> "fe80:0000:0000:0000:abde:3eff:ffab:0012/64"
     */
     toRepresentation() {
-        return;
+        return 'to representation';
     }
 
     /**
@@ -112,14 +120,27 @@ class IP {
 * @return {string} as a valid address
 */
 const _parseAddress = (addr, ver) => {
-    // let splittedAddr = this.address.split('.');
-    // if (splittedAddr.length <= 4 && _isOctet(splittedAddr)) {
-    //     this.version = 4;
-    // } else {
-    //     throw new Error('Tips: Please, enter a valid IP address');
-    // }
+    if (typeof addr === 'number') {
+        let ip = new IP(addr, ver, true);
+        //console.log(ip instanceof IP);
+        return ip.toDottedNotation(addr, ver);
+    }
 
-    return addr;
+    const marks = {
+        4: ['.', _isIPv4, 4],
+        6: [':', _isIPv6, 8]
+    };
+    let splittedAddr = addr.split( marks[ver][0] );
+    if ( marks[ver][1](splittedAddr) ) {
+        if (splittedAddr.length === marks[ver][2]) {
+            return addr;
+        } else {
+            let ip = new IP(addr, ver, true);
+            return ip.toRepresentation(addr, ver);
+        }
+    } else {
+        throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0" OR compressed version OR 3098173636 OR "2001:0db8:0000:0000:0000:ff00:0042:8329")');
+    }
 };
 
 /**
@@ -140,40 +161,47 @@ const _parseVersion = (addr) => {
     } else if ( addr.includes(':') ) {
         return 6;
     } else {
-        throw new Error('Tips: Please, enter a valid IP address ("127.1.0.0" OR "127.1" OR 3098173636 OR "2001:0db8:0000:0000:0000:ff00:0042:8329" OR "2001:db8:0:0:0:ff00:42:8329")');
+        throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0" OR compressed version OR 3098173636 OR "2001:0db8:0000:0000:0000:ff00:0042:8329")');
     }
 };
 
 /**
-* _isHextet - Validates hextets.
+* _isIPv6 - Validates IPv6.
 * @private
-* @return {boolean} whether splitted address contains just hextets or not
+* @return {boolean} whether splitted address is valid IPv6 or not
 */
-const _isHextet = (splittedAddr) => {
-    const regex = /^[0-9a-f]{4}$/i;
-    const isValid = function (hextet) {
-        return regex.test(hextet);
-    };
-    return splittedAddr.every(isValid);
+const _isIPv6 = (splittedAddr) => {
+    if (splittedAddr.length <= 8) {
+        const regex = /^[0-9a-f]{4}$/i; //regex is not valid for compressed notation
+        const isValid = function (hextet) {
+            return regex.test(hextet);
+        };
+        return splittedAddr.every(isValid);
+    } else {
+        throw new Error('Tips: IPv6 cannot contain more than 8 bites');
+    }
 };
 
 /**
-* _isOctet - Validates octets.
+* _isIPv4 - Validates IPv4.
 * @private
-* @return {boolean} whether splitted address contains just octets or not
+* @return {boolean} whether splitted address is valid IPv4 or not
 */
-const _isOctet = (splittedAddr) => {
-    const isValid = function (octet) {
-        return ( (octet <= 255 && octet >= 0) ? true : false );
-
-    };
-    return splittedAddr.every(isValid);
+const _isIPv4 = (splittedAddr) => {
+    if (splittedAddr.length <= 4) {
+        const isValid = function (octet) {
+            return ( (octet <= 255 && octet >= 0) ? true : false );
+        };
+        return splittedAddr.every(isValid);
+    } else {
+        throw new Error('Tips: IPv4 cannot contain more than 4 bites');
+    }
 };
 
 
 
 
-let ip = new IP("fnjdsakil6");
-console.log(ip);
-//console.log(ip.toLong());
-//console.log(ip.toDottedNotation(ip.toLong()));
+let test = new IP('3006:1547:0888:90ef:abcd');
+console.log(test);
+//console.log(test.toLong());
+//console.log(test.toDottedNotation(ip.toLong()));
