@@ -14,8 +14,8 @@ class IP {
     * @constructor
     */
     constructor (address) {
-        this.version = this._parseVersion(address);
-        this.address = this._parseAddress(address, this.version);
+        this.version = this._checkVersion(address);
+        this.address = this._checkAddress(address, this.version);
     }
 
 
@@ -102,18 +102,18 @@ class IP {
     // Private methods
 
     /**
-    * parseAddress - Validates this IP address.
+    * checkAddress - Validates this IP address.
     * @private
     * @return {string} as a valid address
     */
-    _parseAddress (addr, ver) {
+    _checkAddress (addr, ver) {
         if (typeof addr === 'number') {
             return this.toDottedNotation(addr);
         }
 
         const marks = {
-            4: ['.', _isIPv4, 4],
-            6: [':', _isIPv6, 8]
+            4: ['.', this._isIPv4, 4],
+            6: [':', this._isIPv6, 8]
         };
         let splittedAddr = addr.split( marks[ver][0] );
         if ( marks[ver][1](splittedAddr) ) {
@@ -128,18 +128,18 @@ class IP {
     }
 
     /**
-    * parseVersion - Determins this IP version.
+    * checkVersion - Determins this IP version.
     * @private
     * @param {string} addr
     * @return {number}  -> 4 or 6
     */
-    _parseVersion (addr) {
+    _checkVersion (addr) {
         if (typeof addr === 'number') { // have an issue if number is inside quotes
             if (addr > IPv6MAX) {
                 throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power');
             } else if (addr <= IPv4MAX) {
                 return 4;
-            } else if (addr > IPv4MAX) { // needs proof
+            } else if (addr > IPv4MAX) { // !!!! not valid condition
                 return 6; }
         } else if ( addr.includes('.') ) {
             return 4;
@@ -157,7 +157,7 @@ class IP {
     */
     _isIPv6 (splittedAddr) {
         if (splittedAddr.length <= 8) {
-            const regex = /^[0-9a-f]{4}$/i; //regex is not valid for compressed notation
+            const regex = /^[0-9a-f]{1,4}$/i;
             const isValid = function (hextet) {
                 return regex.test(hextet);
             };
@@ -182,13 +182,13 @@ class IP {
             throw new Error('Tips: IPv4 cannot contain more than 4 bites');
         }
     }
- }//IP class end
+}//IP class end
 
 
 
 
 
-let test = new IP(876876867);
+let test = new IP('2001:db8l:ff00:42:8329');
 console.log(test);
 //console.log(test.toLong());
 //console.log(test.toDottedNotation(test.toLong()));
