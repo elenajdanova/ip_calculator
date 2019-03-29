@@ -166,9 +166,7 @@ class IP {
             };
             checked = cleanedAddr.every(isValid);
 
-            if (checked && isShort) {
-                this.short = splittedAddr.join(':');
-            }
+            if (checked && isShort) { this.short = splittedAddr.join(':');}
             return checked;
         } else {
             throw new Error('Tips: IPv6 cannot contain more than 8 bites');
@@ -192,11 +190,17 @@ class IP {
         }
     }
 
+    /**
+     * _isShort - checks if IPv6 addres was compressed and removes empty strings for future validation
+     *
+     * @param  {array} splittedAddr
+     * @return {array} with both results boolean and cleaned array
+     */
     _isShort (splittedAddr) {
         let isShort = false;
         let cleanedAddr = [...splittedAddr];
         for (let i=0; i < cleanedAddr.length; i++) {
-            //removes empty strings in case of compressed notation "1234::1234:1234 and marks this"
+            //removes empty strings in case of compressed notation "1234::1234:1234 and marks addr was shortened"
             if (cleanedAddr[i].length === 0) {
                 cleanedAddr.splice(i, 1);
                 isShort = true;
