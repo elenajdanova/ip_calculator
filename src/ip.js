@@ -140,7 +140,7 @@ class IP {
         };
         let splittedAddr = addr.split( marks[ver][0] );
         if ( marks[ver][1].call(this, splittedAddr) ) {
-            if (splittedAddr.length === marks[ver][2]) {
+            if (splittedAddr.length === marks[ver][2] && this.short === 0) {
                 return addr;
             } else {
                 return this.toRepresentation(addr, ver);
@@ -182,6 +182,7 @@ class IP {
     */
     _isIPv4 (splittedAddr) {
         if (splittedAddr.length <= 4) {
+            if (splittedAddr.length < 4) { this.short = splittedAddr.join('.'); }
             const isValid = function (octet) {
                 return ( (octet <= 255 && octet >= 0) ? true : false );
             };
@@ -214,7 +215,7 @@ class IP {
 
 
 
-let test = new IP('1234:ee:af:5');
+let test = new IP('123g:66');
 console.log(test);
 //console.log(test.toLong());
 //console.log(test.toDottedNotation(test.toLong()));
