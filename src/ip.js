@@ -16,10 +16,8 @@ class IP {
     constructor (address) {
         this.long = 0;
         this.short = 0;
-        console.log("constructor 1 " + this.short);
         this.version = this._checkVersion(address);
         this.address = this._checkAddress(address, this.version);
-        console.log("constructor 2 " + this.short);
     }
 
 
@@ -144,8 +142,7 @@ class IP {
             6: [':', this._isIPv6, 8]
         };
         let splittedAddr = addr.split( marks[ver][0] );
-        if ( marks[ver][1](splittedAddr) ) {
-            console.log('Im from checkAddress ' + this.short);
+        if ( marks[ver][1].call(this, splittedAddr) ) {
             if (splittedAddr.length === marks[ver][2]) {
                 return addr;
             } else {
@@ -183,9 +180,7 @@ class IP {
             };
             checked = cleanedAddr.every(isValid);
             if (checked && isShort) {
-              console.log(this.short);
-              this.short = splittedAddr.join(':');
-              console.log(this.short);
+                this.short = splittedAddr.join(':');
             }
             return checked;
         } else {
@@ -208,13 +203,16 @@ class IP {
             throw new Error('Tips: IPv4 cannot contain more than 4 bites');
         }
     }
+
+    _isShort (splittedAddr) {
+    }
 }//IP class end
 
 
 
 
 
-let test = new IP('2001:db81::ff00:42:8329');
+let test = new IP("1234:ff::af:5");
 console.log(test);
 //console.log(test.toLong());
 //console.log(test.toDottedNotation(test.toLong()));
