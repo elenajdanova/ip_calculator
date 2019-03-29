@@ -58,10 +58,7 @@ class IP {
     */
     toDottedNotation(long) {
         return (
-            [ (long>>>24),
-              (long>>16 & 255),
-              (long>>8 & 255),
-              (long & 255)
+            [ (long>>>24), (long>>16 & 255), (long>>8 & 255),(long & 255)
             ].join('.')
         );
     }
@@ -122,7 +119,7 @@ class IP {
         } else if ( addr.includes(':') ) {
             return 6;
         } else {
-            throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer or IPv6)');
+            throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
         }
     }
 
@@ -149,7 +146,7 @@ class IP {
                 return this.toRepresentation(addr, ver);
             }
         } else {
-            throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer or IPv6)');
+            throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
         }
     }
 
@@ -160,25 +157,15 @@ class IP {
     */
     _isIPv6 (splittedAddr) {
         if (splittedAddr.length <= 8) {
-            let isShort = false;
             let checked = false;
-            let cleanedAddr = [...splittedAddr];
-            //removes empty strings in case of compressed notation "1234::1234:1234"
-            for (let i=0; i < cleanedAddr.length; i++) {
-                if (cleanedAddr[i].length === 0) {
-                    cleanedAddr.splice(i, 1);
-                    isShort = true;
-                }
-                if (cleanedAddr[i].length < 4) {
-                    isShort = true;
-                }
-            }
+            let [isShort, cleanedAddr] = this._isShort(splittedAddr);
 
             const regex = /^[0-9a-f]{1,4}$/i;
             const isValid = function (hextet) {
                 return regex.test(hextet);
             };
             checked = cleanedAddr.every(isValid);
+
             if (checked && isShort) {
                 this.short = splittedAddr.join(':');
             }
@@ -205,14 +192,29 @@ class IP {
     }
 
     _isShort (splittedAddr) {
+        let isShort = false;
+        let cleanedAddr = [...splittedAddr];
+        for (let i=0; i < cleanedAddr.length; i++) {
+            //removes empty strings in case of compressed notation "1234::1234:1234 and marks this"
+            if (cleanedAddr[i].length === 0) {
+                cleanedAddr.splice(i, 1);
+                isShort = true;
+            }
+            //checks if IP was compressed by removing leading zeros like "234:f:34:34"
+            if (cleanedAddr[i].length < 4) {
+                isShort = true;
+            }
+        }
+        return [isShort, cleanedAddr];
     }
+
 }//IP class end
 
 
 
 
 
-let test = new IP("1234:ff::af:5");
+let test = new IP('1234:ee:af:5');
 console.log(test);
 //console.log(test.toLong());
 //console.log(test.toDottedNotation(test.toLong()));
