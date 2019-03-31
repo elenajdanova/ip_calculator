@@ -44,11 +44,24 @@ class IP {
     * @return {integer} -> 2130706432
     */
     toLong () {
-        let octs = this.address.split('.').reverse();
-        let long = octs.reduce(function (long, octet, index) {
-            return (octet * Math.pow(256, index) + long
-            )}, 0);
-        return long;
+        if (this.version === 4) {
+            let splittedAddr = this.address.split('.').reverse();
+            let long = splittedAddr.reduce(function (long, octet, index) {
+                return (octet * Math.pow(256, index) + long
+                )}, 0);
+            return long;
+        } else {
+            let splittedAddr = this.address.split(':');
+            console.log(splittedAddr);
+            let long = 0;
+            for (let i = 0; i < splittedAddr.length; i++){
+                //console.log( parseInt(splittedAddr[i], 16) );
+                long = parseInt(splittedAddr[i], 16) + long;
+
+            }
+            console.log(long);
+            return long;
+        }
     }
 
     /**
@@ -108,8 +121,8 @@ class IP {
     */
     _checkVersion (addr) {
         if (typeof addr === 'number') { // have an issue if number is inside quotes
-            if (addr > IPv6MAX) {
-                throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power');
+            if (addr > IPv6MAX || addr < 0) {
+                throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
             } else if (addr <= IPv4MAX) {
                 return 4;
             } else if (addr > IPv4MAX) {
@@ -143,7 +156,7 @@ class IP {
             if (splittedAddr.length === marks[ver][2] && this.short === 0) {
                 return addr;
             } else {
-                return this.toRepresentation(addr, ver);
+                return addr; //this.toRepresentation(addr, ver);
             }
         } else {
             throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
@@ -169,7 +182,7 @@ class IP {
             if (checked && isShort) { this.short = splittedAddr.join(':');}
             return checked;
         } else {
-            throw new Error('Tips: IPv6 cannot contain more than 8 bites');
+            throw new Error('Tips: IPv6 cannot contain more than 8 bytes');
         }
     }
 
@@ -184,9 +197,10 @@ class IP {
             const isValid = function (octet) {
                 return ( (octet <= 255 && octet >= 0) ? true : false );
             };
+
             return splittedAddr.every(isValid);
         } else {
-            throw new Error('Tips: IPv4 cannot contain more than 4 bites');
+            throw new Error('Tips: IPv4 cannot contain more than 4 bytes');
         }
     }
 
@@ -204,9 +218,9 @@ class IP {
             if (cleanedAddr[i].length === 0) {
                 cleanedAddr.splice(i, 1);
                 isShort = true;
-            }
-            //checks if IP was compressed by removing leading zeros like "234:f:34:34"
-            if (cleanedAddr[i].length < 4) {
+            } else if (cleanedAddr[i].length < 4) {
+                //checks if IP was
+                // compressed by removing leading zeros like "234:f:34:34"
                 isShort = true;
             }
         }
@@ -219,7 +233,8 @@ class IP {
 
 
 
-let test = new IP('123g:66');
+let test = new IP("2001:0db8:0000:0000:0000:ff00:0042:8329");
 console.log(test);
-//console.log(test.toLong());
+console.log(test.toLong());
 //console.log(test.toDottedNotation(test.toLong()));
+// 536936448 + 230162432 + 4278190080 + 4325376 + 2200502272
