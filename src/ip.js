@@ -9,7 +9,7 @@ const IPv6MAX = Math.pow(2, 128) - 1;
 * @return {object} -> IP{address:"184.170.96.196", version: 4}
 */
 
-class IP {
+export default class IP {
     /**
     * @constructor
     */
@@ -44,24 +44,24 @@ class IP {
     * @return {integer} -> 2130706432
     */
     toLong () {
-        if (this.version === 4) {
+        //if (this.version === 4) {
             let splittedAddr = this.address.split('.').reverse();
             let long = splittedAddr.reduce(function (long, octet, index) {
                 return (octet * Math.pow(256, index) + long
                 )}, 0);
             return long;
-        } else {
-            let splittedAddr = this.address.split(':');
-            console.log(splittedAddr);
-            let long = 0;
-            for (let i = 0; i < splittedAddr.length; i++){
-                //console.log( parseInt(splittedAddr[i], 16) );
-                long = parseInt(splittedAddr[i], 16) + long;
-
-            }
-            console.log(long);
-            return long;
-        }
+        // } else {
+        //     let splittedAddr = this.address.split(':');
+        //     console.log(splittedAddr);
+        //     let long = 0;
+        //     for (let i = 0; i < splittedAddr.length; i++){
+        //         //console.log( parseInt(splittedAddr[i], 16) );
+        //         long = parseInt(splittedAddr[i], 16) + long;
+        //
+        //     }
+        //     console.log(long);
+        //     return long;
+        // }
     }
 
     /**
@@ -120,17 +120,19 @@ class IP {
     * @return {number}  -> 4 or 6
     */
     _checkVersion (addr) {
-        if (typeof addr === 'number') { // have an issue if number is inside quotes
-            if (addr > IPv6MAX || addr < 0) {
-                throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
-            } else if (addr <= IPv4MAX) {
+        if (addr !== undefined) {
+            if (typeof addr === 'number') { // have an issue if number is inside quotes
+                if (addr > IPv6MAX || addr < 0) {
+                    throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
+                } else if (addr <= IPv4MAX) {
+                    return 4;
+                } else if (addr > IPv4MAX) {
+                    return 6; }
+            } else if ( addr.includes('.') ) {
                 return 4;
-            } else if (addr > IPv4MAX) {
-                return 6; }
-        } else if ( addr.includes('.') ) {
-            return 4;
-        } else if ( addr.includes(':') ) {
-            return 6;
+            } else if ( addr.includes(':') ) {
+                return 6;
+            }
         } else {
             throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
         }
@@ -156,7 +158,7 @@ class IP {
             if (splittedAddr.length === marks[ver][2] && this.short === 0) {
                 return addr;
             } else {
-                return addr; //this.toRepresentation(addr, ver);
+                return this.toRepresentation(addr, ver);
             }
         } else {
             throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
@@ -233,8 +235,8 @@ class IP {
 
 
 
-let test = new IP("2001:0db8:0000:0000:0000:ff00:0042:8329");
-console.log(test);
-console.log(test.toLong());
+//let test = new IP("0.0.0.0");
+//console.log(test);
+//console.log(test.toLong());
 //console.log(test.toDottedNotation(test.toLong()));
 // 536936448 + 230162432 + 4278190080 + 4325376 + 2200502272

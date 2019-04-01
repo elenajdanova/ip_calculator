@@ -1,9 +1,7 @@
-import IP from './src/ip';
+import IP from './src/ip.js';
 
 // function sum(a, b) {
 //     return a + b;
 // }
-let test = new IP('12.123.123.ff');
-console.log(test);
 
-export default test;
+console.log(test);
