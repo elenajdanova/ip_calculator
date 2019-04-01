@@ -93,15 +93,6 @@ export default class IP {
     }
 
     /**
-    * toRepresentation - Converts shortened version to canonical representation of the IP.
-    * IP('::1').toRepresentation
-    * @return {string} -> "fe80:0000:0000:0000:abde:3eff:ffab:0012/64"
-    */
-    toRepresentation() {
-        return 'to representation';
-    }
-
-    /**
     * toCompressed - Compress an IP address to its shortest possible form.
     * IP('127.0.0.1').toCompressed
     * @return {string} -> "127.1"
@@ -158,7 +149,7 @@ export default class IP {
             if (splittedAddr.length === marks[ver][2] && this.short === 0) {
                 return addr;
             } else {
-                return this.toRepresentation(addr, ver);
+                return this._toRepresentation(splittedAddr);
             }
         } else {
             throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
@@ -227,6 +218,24 @@ export default class IP {
             }
         }
         return [isShort, cleanedAddr];
+    }
+
+    /**
+    * toRepresentation - Converts shortened version to canonical representation of the IP.
+    * IP('::1').toRepresentation
+    * @private
+    * @param  {array} splittedAddr
+    * @return {string} -> "fe80:0000:0000:0000:abde:3eff:ffab:0012/64"
+    */
+    _toRepresentation(splittedAddr) {
+        if ( this.version === 4 ) {
+            while (splittedAddr.length < 4) {
+                splittedAddr.push('0');
+            }
+            return splittedAddr.join('.');
+        } else {
+            return 'to representation';
+        }
     }
 
 }//IP class end
