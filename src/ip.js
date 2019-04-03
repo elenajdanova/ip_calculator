@@ -44,25 +44,19 @@ export default class IP {
     * @return {integer} -> 2130706432
     */
     toLong () {
-        //if (this.version === 4) {
+        if (this.version === 4) {
             let splittedAddr = this.address.split('.').reverse();
             let long = splittedAddr.reduce(function (long, octet, index) {
                 return (octet * Math.pow(256, index) + long
                 )}, 0);
             return long;
-        // } else {
-        //     let splittedAddr = this.address.split(':');
-        //     console.log(splittedAddr);
-        //     let long = 0;
-        //     for (let i = 0; i < splittedAddr.length; i++){
-        //         //console.log( parseInt(splittedAddr[i], 16) );
-        //         long = parseInt(splittedAddr[i], 16) + long;
-        //
-        //     }
-        //     console.log(long);
-        //     return long;
-        // }
+        } else {
+            let joinedAddr = this.address.split(':').join('');
+            let long = parseInt(joinedAddr, 16);
+        }
+        return long;
     }
+
 
     /**
     * toDottedNotation - Converts long IP to dotquad or hextet representation
@@ -198,8 +192,8 @@ export default class IP {
     }
 
     /**
-     * _isShort - checks if IPv6 addres was compressed and removes empty strings for future validation
-     *
+     * _isShort - checks if IPv6 addres was compressed like this "234:f:34:34:1:1:2:2" or like "1234::1234:1234" and removes empty strings for future validation
+     * @private
      * @param  {array} splittedAddr
      * @return {array} with both results boolean and cleaned array
      */
@@ -207,13 +201,13 @@ export default class IP {
         let isShort = false;
         let cleanedAddr = [...splittedAddr];
         for (let i=0; i < cleanedAddr.length; i++) {
-            //removes empty strings in case of compressed notation "1234::1234:1234 and marks addr was shortened"
             if (cleanedAddr[i].length === 0) {
                 cleanedAddr.splice(i, 1);
                 isShort = true;
+                i--;
+                // for addr '::1' can happen that there are 2 empty strings
+                // together, so by i-- we check every el of array but not next but one
             } else if (cleanedAddr[i].length < 4) {
-                //checks if IP was
-                // compressed by removing leading zeros like "234:f:34:34"
                 isShort = true;
             }
         }
@@ -234,9 +228,35 @@ export default class IP {
             }
             return splittedAddr.join('.');
         } else {
-            return 'to representation';
+            for (let i = 0; i <= 8; i++) {
+                if (splittedAddr[i] === '') {
+                    let missHex = 9 - splittedAddr.length;
+                    let flag = true;
+                    while (missHex > 0) {
+                        if (flag) {
+                            splittedAddr.splice(i, 1, '0000');
+                            missHex--;
+                            flag = false;
+                        } else {
+                            splittedAddr.splice(i, 0, '0000');
+                            missHex--;
+                        }
+                    }
+                }
+            }
+            for (let i = 0; i < splittedAddr.length; i++) {
+                if (splittedAddr[i].length < 4) {
+                    let missNum = 4 - splittedAddr[i].length;
+                    while (missNum > 0) {
+                        splittedAddr[i] = '0' + splittedAddr[i];
+                        missNum--;
+                    }
+                }
+            }
         }
+        return splittedAddr.join(':');
     }
+
 
 }//IP class end
 

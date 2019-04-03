@@ -81,3 +81,17 @@ describe('IPv6, valid full dotted ip, testing validation methods', () => {
         });
     }
 });
+
+describe('IPv6, valid short notation, testing toRepresentation method', () => {
+    test.each`
+    address                             | expected
+    ${'2001:ead:beef:0:c01d:c01a::987'} | ${'2001:0ead:beef:0000:c01d:c01a:0000:0987'}
+    ${'2002:babe::abc:2:3'}             | ${'2002:babe:0000:0000:0000:0abc:0002:0003'}
+    ${'7201::4ac1:1e:1f:ffff:fab'}      | ${'7201:0000:0000:4ac1:001e:001f:ffff:0fab'}
+    ${'::1'}                            | ${'0000:0000:0000:0000:0000:0000:0000:0001'}
+
+    `('returns $expected representational version for ip $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.address).toBe(expected);
+});
+});
