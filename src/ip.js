@@ -44,15 +44,15 @@ export default class IP {
     * @return {integer} -> 2130706432
     */
     toLong () {
+        let long;
         if (this.version === 4) {
             let splittedAddr = this.address.split('.').reverse();
-            let long = splittedAddr.reduce(function (long, octet, index) {
+            long = splittedAddr.reduce(function (long, octet, index) {
                 return (octet * Math.pow(256, index) + long
                 )}, 0);
-            return long;
         } else {
             let joinedAddr = this.address.split(':').join('');
-            let long = parseInt(joinedAddr, 16);
+            long = parseInt(joinedAddr, 16);
         }
         return long;
     }
@@ -105,7 +105,7 @@ export default class IP {
     * @return {number}  -> 4 or 6
     */
     _checkVersion (addr) {
-        if (addr !== undefined) {
+        if (addr !== undefined && addr !== null) {
             if (typeof addr === 'number') { // have an issue if number is inside quotes
                 if (addr > IPv6MAX || addr < 0) {
                     throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
@@ -184,7 +184,6 @@ export default class IP {
             const isValid = function (octet) {
                 return ( (octet <= 255 && octet >= 0) ? true : false );
             };
-
             return splittedAddr.every(isValid);
         } else {
             throw new Error('Tips: IPv4 cannot contain more than 4 bytes');
@@ -223,8 +222,25 @@ export default class IP {
     */
     _toRepresentation(splittedAddr) {
         if ( this.version === 4 ) {
-            while (splittedAddr.length < 4) {
-                splittedAddr.push('0');
+            for (let i = 0; i <= 4; i++) {
+                if (splittedAddr[i] === '') {
+                    let missOcts = 5 - splittedAddr.length;
+                    let flag = true;
+                    while (missOcts > 0) {
+                        if (flag) {
+                            splittedAddr.splice(i, 1, '0');
+                            missOcts--;
+                            flag = false;
+                        } else {
+                            splittedAddr.splice(i, 0, '0');
+                            missOcts--;
+                        }
+                    }
+                } else {
+                    while (splittedAddr.length < 4) {
+                        splittedAddr.push('0');
+                    }
+                }
             }
             return splittedAddr.join('.');
         } else {

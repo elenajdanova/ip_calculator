@@ -4,7 +4,7 @@ import IP from '../src/ip.js';
   // ${'def'}             | toThrowError("valid")
   // ${'12345'}           | toThrowError("valid")
   // ${'19.300.114.1280'} | toThrowError("valid")
-  // '101.200.57', '255.255', , 47898909
+  // 47898909
   //
   //   test(`toLong returns ${testAddr[i]}`, () => {
     //     const ip = new IP(testAddr[i]);
@@ -30,6 +30,20 @@ describe('IPv4, valid full dotted ip, testing validation methods', () => {
             expect(ip.short).toBe(0);
         });
     }
+});
+
+describe('IPv4, valid short notation, testing toRepresentation method', () => {
+    test.each`
+    address             | expected
+    ${'101.200.57'}     | ${'101.200.57.0'}
+    ${'255.255'}        | ${'255.255.0.0'}
+    ${'.1'}             | ${'0.0.0.1'}
+    ${'5.'}             | ${'5.0.0.0'}
+
+    `('returns $expected representational version for ip $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.address).toBe(expected);
+});
 });
 
 describe('IPv4, testing toLong method', () => {
