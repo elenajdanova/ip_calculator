@@ -129,6 +129,7 @@ export default class IP {
                 return 6;
             }
         }
+        //console.log("im in error");
         throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
     }
 
@@ -138,7 +139,10 @@ export default class IP {
     * @return {string} as a valid address
     */
     _checkAddress (addr, ver) {
-        if (typeof addr === 'number') {
+        const reNum = /^[0-9]+$/;
+        //console.log("im in check addres");
+        if ( reNum.test(addr) ) {
+            //console.log("im in number");
             this.long = addr;
             return this.toDottedNotation(addr);
         }

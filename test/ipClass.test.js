@@ -52,7 +52,7 @@ describe('IPv4, testing toLong method', () => {
 });
 
 describe('Invalid IPv4, testing validation methods', () => {
-    const testAddr = ['1920.168.114.42', 'def.', '12345', '.', null, '192.168..', 'hello there!'];
+    const testAddr = ['1920.168.114.42', 'def.', '...', '.', '192.168..', 'hello there!'];
     for (let i = 0; i < testAddr.length; i++) {
         test(`${testAddr[i]} throws error`, () => {
             function addressError() {
@@ -101,6 +101,20 @@ describe('IPv6, valid short notation, testing toRepresentation method', () => {
 
 describe('Invalid IPv6, testing validation methods', () => {
     const testAddr = [':', 'fahy:0001', 'beef:::', undefined, null, ''];
+    for (let i = 0; i < testAddr.length; i++) {
+        test(`${testAddr[i]} throws error`, () => {
+            function addressError() {
+                let ip = new IP(testAddr[i]);
+                ip.address;
+            }
+            expect(addressError).toThrowError('Tips');
+        });
+    }
+});
+
+
+describe('Invalid integer, testing validation methods', () => {
+    const testAddr = ['-15', -130];
     for (let i = 0; i < testAddr.length; i++) {
         test(`${testAddr[i]} throws error`, () => {
             function addressError() {
