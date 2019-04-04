@@ -105,22 +105,31 @@ export default class IP {
     * @return {number}  -> 4 or 6
     */
     _checkVersion (addr) {
-        if (addr !== undefined && addr !== null) {
-            if (typeof addr === 'number') { // have an issue if number is inside quotes
+        //matches all possible chars in both versions of IP
+        const reGen = /^[0-9a-f.:]+$/i;
+
+        if ( reGen.test(addr) ) {
+            //checks if there is .. and more or whole IP is just a dot
+            const reDots = /\.{2,}|^\.{1}$/;
+            //checks if there is ::: and more or whole IP is just a colon
+            const reColon = /:{3,}|^:{1}$/;
+            //checks if there is only digits in long IP
+            const reNum = /^[0-9]+$/;
+
+            if ( reNum.test(addr) ) {
                 if (addr > IPv6MAX || addr < 0) {
                     throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
                 } else if (addr <= IPv4MAX) {
                     return 4;
                 } else if (addr > IPv4MAX) {
                     return 6; }
-            } else if ( addr.includes('.') ) {
+            } else if ( addr.includes('.') && !reDots.test(addr) ) {
                 return 4;
-            } else if ( addr.includes(':') ) {
+            } else if ( addr.includes(':') && !reColon.test(addr) ) {
                 return 6;
             }
-        } else {
-            throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
         }
+        throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
     }
 
     /**
@@ -160,9 +169,8 @@ export default class IP {
             let checked = false;
             let [isShort, cleanedAddr] = this._isShort(splittedAddr);
 
-            const regex = /^[0-9a-f]{1,4}$/i;
             const isValid = function (hextet) {
-                return regex.test(hextet);
+                return hextet.length <= 4;
             };
             checked = cleanedAddr.every(isValid);
 
@@ -180,7 +188,7 @@ export default class IP {
     */
     _isIPv4 (splittedAddr) {
         if (splittedAddr.length <= 4) {
-            if (splittedAddr.length < 4) { this.short = splittedAddr.join('.'); }
+            if (splittedAddr.length < 4) { this.short = splittedAddr.join('.');}
             const isValid = function (octet) {
                 return ( (octet <= 255 && octet >= 0) ? true : false );
             };
@@ -215,10 +223,10 @@ export default class IP {
 
     /**
     * toRepresentation - Converts shortened version to canonical representation of the IP.
-    * IP('::1').toRepresentation
+    * IP('::1').address
     * @private
     * @param  {array} splittedAddr
-    * @return {string} -> "fe80:0000:0000:0000:abde:3eff:ffab:0012/64"
+    * @return {string} -> "0000:0000:0000:0000:0000:0000:0000:0001"
     */
     _toRepresentation(splittedAddr) {
         if ( this.version === 4 ) {
@@ -236,11 +244,10 @@ export default class IP {
                             missOcts--;
                         }
                     }
-                } else {
-                    while (splittedAddr.length < 4) {
-                        splittedAddr.push('0');
-                    }
                 }
+            }
+            while (splittedAddr.length < 4) {
+                splittedAddr.push('0');
             }
             return splittedAddr.join('.');
         } else {

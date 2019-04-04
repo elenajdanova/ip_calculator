@@ -1,17 +1,6 @@
 import IP from '../src/ip.js';
 
-//   ${'abc:'}            | toThrowError("valid")
-  // ${'def'}             | toThrowError("valid")
-  // ${'12345'}           | toThrowError("valid")
-  // ${'19.300.114.1280'} | toThrowError("valid")
   // 47898909
-  //
-  //   test(`toLong returns ${testAddr[i]}`, () => {
-    //     const ip = new IP(testAddr[i]);
-    //     expect(ip.address).toBe(testAddr[i]);
-    // });
-    // , '2553432', 4789890956000, '30.0.0.400', 'abc:', 'beef', undefined
-
 
 describe('IPv4, valid full dotted ip, testing validation methods', () => {
     const testAddr = ['192.168.114.42', '192.168.0.1', '255.168.114.128', '10.0.0.1', '0.0.0.0'];
@@ -62,20 +51,19 @@ describe('IPv4, testing toLong method', () => {
 });
 });
 
-// describe('IP class, Invalid IPv4, testing validation methods', () => {
-//     const testAddr = ['1920.168.114.42', '900.1'];
-//     for (let i = 0; i < testAddr.length; i++) {
-//         const ip = new IP(testAddr[i]);
-//
-//         test('addres throws error', () => {
-//             function addressError() {
-//                 ip._checkAddress(testAddr[i]);
-//             }
-//             expect(addressError).toThrowError();
-//         });
-//
-//     }
-// });
+describe('Invalid IPv4, testing validation methods', () => {
+    const testAddr = ['1920.168.114.42', 'def.', '12345', '.', null, '192.168..', 'hello there!'];
+    for (let i = 0; i < testAddr.length; i++) {
+        test(`${testAddr[i]} throws error`, () => {
+            function addressError() {
+                let ip = new IP(testAddr[i]);
+                ip.address;
+            }
+            expect(addressError).toThrowError('Tips');
+        });
+    }
+});
+
 
 describe('IPv6, valid full dotted ip, testing validation methods', () => {
     const testAddr = ['2001:dead:beef:0051:c01d:c01a:abcd:0987', '2002:babe:0000:0000:47b3:0000:0002:0003', '7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'];
@@ -103,9 +91,23 @@ describe('IPv6, valid short notation, testing toRepresentation method', () => {
     ${'2002:babe::abc:2:3'}             | ${'2002:babe:0000:0000:0000:0abc:0002:0003'}
     ${'7201::4ac1:1e:1f:ffff:fab'}      | ${'7201:0000:0000:4ac1:001e:001f:ffff:0fab'}
     ${'::1'}                            | ${'0000:0000:0000:0000:0000:0000:0000:0001'}
+    ${'1af0::'}                         | ${'1af0:0000:0000:0000:0000:0000:0000:0000'}
 
     `('returns $expected representational version for ip $address',({address, expected}) => {
     const ip = new IP(address);
     expect(ip.address).toBe(expected);
 });
+});
+
+describe('Invalid IPv6, testing validation methods', () => {
+    const testAddr = [':', 'fahy:0001', 'beef:::', undefined, null, ''];
+    for (let i = 0; i < testAddr.length; i++) {
+        test(`${testAddr[i]} throws error`, () => {
+            function addressError() {
+                let ip = new IP(testAddr[i]);
+                ip.address;
+            }
+            expect(addressError).toThrowError('Tips');
+        });
+    }
 });
