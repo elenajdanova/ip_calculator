@@ -114,7 +114,7 @@ describe('Invalid IPv6, testing validation methods', () => {
 
 
 describe('Invalid integer, testing validation methods', () => {
-    const testAddr = ['-15', -130];
+    const testAddr = ['-15', '0', 0, -130, 340282366920938463463374607431798211456n];
     for (let i = 0; i < testAddr.length; i++) {
         test(`${testAddr[i]} throws error`, () => {
             function addressError() {

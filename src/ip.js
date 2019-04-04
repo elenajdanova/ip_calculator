@@ -1,5 +1,5 @@
 const IPv4MAX = Math.pow(2, 32) - 1;
-const IPv6MAX = Math.pow(2, 128) - 1;
+const IPv6MAXbig = (2n ** 128n) - 1n;
 
 /**
 * Represents a single IP address v4 or v6.
@@ -117,7 +117,7 @@ export default class IP {
             const reNum = /^[0-9]+$/;
 
             if ( reNum.test(addr) ) {
-                if (addr > IPv6MAX || addr < 0) {
+                if (addr > IPv6MAXbig || addr <= 0) {
                     throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
                 } else if (addr <= IPv4MAX) {
                     return 4;
