@@ -59,15 +59,26 @@ export default class IP {
 
 
     /**
-    * toDottedNotation - Converts long IP to dotquad or hextet representation
-    * @param {integer} long
+    * toDottedNotation - Converts big integer IP to full dotquad or hextet representation
+    * @param {integer} bigInt
     * @return {string} -> "184.170.96.196"
     */
-    toDottedNotation(long) {
-        return (
-            [ (long>>>24), (long>>16 & 255), (long>>8 & 255),(long & 255)
-            ].join('.')
-        );
+    toDottedNotation(bigInt) {
+        if (this.version === 4) {
+            return (
+                [ (bigInt>>>24), (bigInt>>16 & 255), (bigInt>>8 & 255),
+                  (bigInt & 255)
+                ].join('.')
+            );
+        } else {
+            let hex = bigInt.toString(16);
+            let groups = [];
+            while (hex.length < 32) { hex = '0' + hex; }
+            for (let i = 0; i < 8; i++) {
+                groups.push(hex.slice(i * 4, (i + 1) * 4));
+            }
+            return groups.join(':');
+        }
     }
 
     /**
@@ -106,15 +117,14 @@ export default class IP {
     */
     _checkVersion (addr) {
         //matches all possible chars in both versions of IP
-        const reGen = /^[0-9a-f.:]+$/i;
-
+        const reGen = /^[0-9a-fn.:]+$/i;
         if ( reGen.test(addr) ) {
             //checks if there is .. and more or whole IP is just a dot
             const reDots = /\.{2,}|^\.{1}$/;
             //checks if there is ::: and more or whole IP is just a colon
             const reColon = /:{3,}|^:{1}$/;
-            //checks if there is only digits in long IP
-            const reNum = /^[0-9]+$/;
+            //checks if there is only digits and n in bigInt IP
+            const reNum = /^[0-9n]+$/;
 
             if ( reNum.test(addr) ) {
                 if (addr > IPv6MAXbig || addr <= 0) {
@@ -129,7 +139,6 @@ export default class IP {
                 return 6;
             }
         }
-        //console.log("im in error");
         throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
     }
 
@@ -140,9 +149,7 @@ export default class IP {
     */
     _checkAddress (addr, ver) {
         const reNum = /^[0-9]+$/;
-        //console.log("im in check addres");
         if ( reNum.test(addr) ) {
-            //console.log("im in number");
             this.long = addr;
             return this.toDottedNotation(addr);
         }
@@ -173,8 +180,9 @@ export default class IP {
             let checked = false;
             let [isShort, cleanedAddr] = this._isShort(splittedAddr);
 
+            const regex = /^[0-9a-f]{1,4}$/i;
             const isValid = function (hextet) {
-                return hextet.length <= 4;
+                return regex.test(hextet);
             };
             checked = cleanedAddr.every(isValid);
 

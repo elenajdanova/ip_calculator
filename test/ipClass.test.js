@@ -93,7 +93,7 @@ describe('IPv6, valid short notation, testing toRepresentation method', () => {
     ${'::1'}                            | ${'0000:0000:0000:0000:0000:0000:0000:0001'}
     ${'1af0::'}                         | ${'1af0:0000:0000:0000:0000:0000:0000:0000'}
 
-    `('returns $expected representational version for ip $address',({address, expected}) => {
+    `('returns $expected full version for $address',({address, expected}) => {
     const ip = new IP(address);
     expect(ip.address).toBe(expected);
 });
@@ -112,6 +112,33 @@ describe('Invalid IPv6, testing validation methods', () => {
     }
 });
 
+describe('IPv4 valid integer, testing validation methods', () => {
+    test.each`
+  address                        | expected
+  ${1707620608}                  | ${'101.200.57.0'}
+  ${4294901760}                  | ${'255.255.0.0'}
+  ${'192'}                       | ${'0.0.0.192'}
+  ${'95465'}                     | ${'0.1.116.233'}
+  `('returns $expected for ip $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.address).toBe(expected);
+});
+});
+
+describe('IPv6, valid big integer, testing validation methods', () => {
+    const addr = [ BigInt('340282366920938463463374'), BigInt('27028236938463463374')];
+    const expected = ['0000:0000:0000:480e:be7b:9d58:566c:87ce', '0000:0000:0000:0001:7717:964b:3634:c7ce'];
+
+    test(`returns ${expected[0]} for ip ${addr[0]}`, () => {
+        const ip = new IP(addr[0]);
+        expect(ip.address).toBe(expected[0]);
+    });
+
+    test(`returns ${expected[1]} for ip ${addr[1]}`, () => {
+        const ip = new IP(addr[1]);
+        expect(ip.address).toBe(expected[1]);
+    });
+});
 
 describe('Invalid integer, testing validation methods', () => {
     const testAddr = ['-15', '0', 0, -130, 340282366920938463463374607431798211456n];
