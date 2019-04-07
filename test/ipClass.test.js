@@ -21,6 +21,21 @@ describe('IPv4, valid full dotted ip, testing validation methods', () => {
     }
 });
 
+describe('IPv4, valid ip, testing toBimary method', () => {
+    test.each`
+    address                 | expected
+    ${'192.168.114.42'}     | ${'11000000.10101000.01110010.00101010'}
+    ${'192.168.0.1'}        | ${'11000000.10101000.00000000.00000001'}
+    ${'255.168.114.128'}    | ${'11111111.10101000.01110010.10000000'}
+    ${'10.0.0.1'}           | ${'00001010.00000000.00000000.00000001'}
+
+    `('returns $expected binary version for $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.toBinary()).toBe(expected);
+});
+});
+
+
 describe('IPv4, valid short notation, testing toRepresentation method', () => {
     test.each`
     address             | expected
@@ -35,7 +50,7 @@ describe('IPv4, valid short notation, testing toRepresentation method', () => {
 });
 });
 
-describe('IPv4, testing toLong method', () => {
+describe('IPv4, testing toInteger method', () => {
     test.each`
     address              | expected
     ${'101.200.57'}      | ${1707620608}
@@ -47,7 +62,7 @@ describe('IPv4, testing toLong method', () => {
     ${'0.0.0.0'}         | ${0}
     `('returns $expected for ip $address',({address, expected}) => {
     const ip = new IP(address);
-    expect(ip.toLong()).toBe(expected);
+    expect(ip.toInteger()).toBe(expected);
 });
 });
 
@@ -96,6 +111,41 @@ describe('IPv6, valid short notation, testing toRepresentation method', () => {
     `('returns $expected full version for $address',({address, expected}) => {
     const ip = new IP(address);
     expect(ip.address).toBe(expected);
+});
+});
+
+//not working with BIgInts
+// describe('IPv6, testing toInteger method', () => {
+//     const addr = ['0000:0000:0000:480e:be7b:9d58:566c:87ce', '2002:babe::abc:2:3', '7201::4ac1:1e:1f:ffff:fab'];
+//     const expected = [BigInt('340282366920938463463374'), BigInt('42549468040371534509101895686289489923'), BigInt('151537183816339297354012318334717988779')];
+//
+//     test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
+//         const ip = new IP(addr[0]);
+//         expect(ip.toInteger()).toBe(expected[0]);
+//     });
+//
+//     test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
+//         const ip = new IP(addr[1]);
+//         expect(ip.toInteger()).toBe(expected[1]);
+//     });
+//
+//     test(`returns ${expected[2]} integer for ${addr[2]}`, () => {
+//         const ip = new IP(addr[2]);
+//         expect(ip.toInteger()).toBe(expected[2]);
+//     });
+// });
+
+describe('IPv6, valid ip, testing toBimary method', () => {
+    test.each`
+    address                 | expected
+    ${'2001:dead:beef:0051:c01d:c01a:abcd:0987'}  | ${'0010000000000001.1101111010101101.1011111011101111.0000000001010001.1100000000011101.1100000000011010.1010101111001101.0000100110000111'}
+    ${'2002:babe:0000:0000:47b3:0000:0002:0003'}  | ${'0010000000000010.1011101010111110.0000000000000000.0000000000000000.0100011110110011.0000000000000000.0000000000000010.0000000000000011'}
+    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${'0111001000000001.1101111010101101.1011111011101111.0100101011000001.1100000000011110.1100000000011111.1111111111111111.0000111110101011'}
+    ${'2001:db8:0000:0000:0000:0000:00ff:ffff'}   | ${'0010000000000001.0000110110111000.0000000000000000.0000000000000000.0000000000000000.0000000000000000.0000000011111111.1111111111111111'}
+
+    `('returns binary version for $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.toBinary()).toBe(expected);
 });
 });
 

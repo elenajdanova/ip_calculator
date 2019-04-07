@@ -14,7 +14,7 @@ export default class IP {
     * @constructor
     */
     constructor (address) {
-        this.long = 0;
+        this.integer = 0;
         this.short = 0;
         this.version = this._checkVersion(address);
         this.address = this._checkAddress(address, this.version);
@@ -40,27 +40,26 @@ export default class IP {
     }
 
     /**
-    * toLong - Converts dotquad or hextet IP to long
+    * toInteger - Converts dotquad or hextet IP to integer
     * @return {integer} -> 2130706432
     */
-    toLong () {
-        let long;
+    toInteger () {
+        let bigInt;
         if (this.version === 4) {
             let splittedAddr = this.address.split('.').reverse();
-            long = splittedAddr.reduce(function (long, octet, index) {
-                return (octet * Math.pow(256, index) + long
+            bigInt = splittedAddr.reduce(function (bigInt, octet, index) {
+                return (octet * Math.pow(256, index) + bigInt
                 )}, 0);
         } else {
             let joinedAddr = this.address.split(':').join('');
-            long = parseInt(joinedAddr, 16);
+            bigInt = BigInt( parseInt(joinedAddr, 16) ); // not sure about neccessity of BigInt here. need tests
         }
-        return long;
+        return bigInt;
     }
-
 
     /**
     * toDottedNotation - Converts big integer IP to full dotquad or hextet representation
-    * @param {integer} bigInt
+    * @param {bigint} bigInt
     * @return {string} -> "184.170.96.196"
     */
     toDottedNotation(bigInt) {
@@ -86,7 +85,25 @@ export default class IP {
     * @return {string} -> 01111111.00000000.00000000.00000001
     */
     toBinary() {
-        return;
+        let binary = [];
+        let v = this.version;
+        let marks = {
+          4:['.', 10, 8],
+          6:[':', 16, 16]
+        };
+        let splittedAddr = this.address.split(marks[v][0]);
+
+        splittedAddr.forEach(function (int) {
+            binary.push( parseInt(int, marks[v][1]).toString(2) );
+        });
+        for (let i = 0; i < binary.length; i++) {
+            if (binary[i].length < marks[v][2]) {
+                while (binary[i].length < marks[v][2]) {
+                  binary[i] = '0' + binary[i];
+                }
+            }
+        };
+        return binary.join('.');
     }
 
     /**
@@ -147,10 +164,10 @@ export default class IP {
     * @private
     * @return {string} as a valid address
     */
-    _checkAddress (addr, ver) {
+    _checkAddress (addr, v) {
         const reNum = /^[0-9]+$/;
         if ( reNum.test(addr) ) {
-            this.long = addr;
+            this.integer = addr;
             return this.toDottedNotation(addr);
         }
 
@@ -158,9 +175,9 @@ export default class IP {
             4: ['.', this._isIPv4, 4],
             6: [':', this._isIPv6, 8]
         };
-        let splittedAddr = addr.split( marks[ver][0] );
-        if ( marks[ver][1].call(this, splittedAddr) ) {
-            if (splittedAddr.length === marks[ver][2] && this.short === 0) {
+        let splittedAddr = addr.split( marks[v][0] );
+        if ( marks[v][1].call(this, splittedAddr) ) {
+            if (splittedAddr.length === marks[v][2] && this.short === 0) {
                 return addr;
             } else {
                 return this._toRepresentation(splittedAddr);
@@ -294,13 +311,3 @@ export default class IP {
 
 
 }//IP class end
-
-
-
-
-
-//let test = new IP("0.0.0.0");
-//console.log(test);
-//console.log(test.toLong());
-//console.log(test.toDottedNotation(test.toLong()));
-// 536936448 + 230162432 + 4278190080 + 4325376 + 2200502272
