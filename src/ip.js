@@ -52,8 +52,9 @@ export default class IP {
                 )}, 0);
         } else {
             let joinedAddr = this.address.split(':').join('');
-            bigInt = BigInt( parseInt(joinedAddr, 16) ); // not sure about neccessity of BigInt here. need tests
+            bigInt = BigInt('0x' + joinedAddr);
         }
+        this.integer = bigInt;
         return bigInt;
     }
 
@@ -66,7 +67,7 @@ export default class IP {
         if (this.version === 4) {
             return (
                 [ (bigInt>>>24), (bigInt>>16 & 255), (bigInt>>8 & 255),
-                  (bigInt & 255)
+                    (bigInt & 255)
                 ].join('.')
             );
         } else {
@@ -85,33 +86,30 @@ export default class IP {
     * @return {string} -> 01111111.00000000.00000000.00000001
     */
     toBinary() {
-        let binary = [];
+        if (this.integer === 0) {
+            this.toInteger();
+        }
+        let binary = this.integer.toString(2);
         let v = this.version;
-        let marks = {
-          4:['.', 10, 8],
-          6:[':', 16, 16]
-        };
-        let splittedAddr = this.address.split(marks[v][0]);
+        let marks = { 4: 32, 6: 128 };
 
-        splittedAddr.forEach(function (int) {
-            binary.push( parseInt(int, marks[v][1]).toString(2) );
-        });
-        for (let i = 0; i < binary.length; i++) {
-            if (binary[i].length < marks[v][2]) {
-                while (binary[i].length < marks[v][2]) {
-                  binary[i] = '0' + binary[i];
-                }
+        if (binary.length < marks[v]) {
+            while (binary.length < marks[v]) {
+                binary = '0' + binary;
             }
-        };
-        return binary.join('.');
+        }
+        return binary;
     }
 
     /**
-    * toHEX - Converts decimal IP to full-length binary representation.
+    * toHEX - Converts decimal IP to hexadecimal representation.
     * @return {string} -> 7f000001
     */
     toHEX() {
-        return;
+        if (this.integer === 0) {
+            this.toInteger();
+        }
+        return this.integer.toString(16);
     }
 
     /**
@@ -311,3 +309,6 @@ export default class IP {
 
 
 }//IP class end
+
+// console.log( ip = new IP('2002:babe::abc:2:3') );
+// console.log(ip.toInteger());

@@ -1,7 +1,5 @@
 import IP from '../src/ip.js';
 
-  // 47898909
-
 describe('IPv4, valid full dotted ip, testing validation methods', () => {
     const testAddr = ['192.168.114.42', '192.168.0.1', '255.168.114.128', '10.0.0.1', '0.0.0.0'];
     for (let i = 0; i < testAddr.length; i++) {
@@ -24,10 +22,10 @@ describe('IPv4, valid full dotted ip, testing validation methods', () => {
 describe('IPv4, valid ip, testing toBimary method', () => {
     test.each`
     address                 | expected
-    ${'192.168.114.42'}     | ${'11000000.10101000.01110010.00101010'}
-    ${'192.168.0.1'}        | ${'11000000.10101000.00000000.00000001'}
-    ${'255.168.114.128'}    | ${'11111111.10101000.01110010.10000000'}
-    ${'10.0.0.1'}           | ${'00001010.00000000.00000000.00000001'}
+    ${'192.168.114.42'}     | ${'11000000101010000111001000101010'}
+    ${'192.168.0.1'}        | ${'11000000101010000000000000000001'}
+    ${'255.168.114.128'}    | ${'11111111101010000111001010000000'}
+    ${'10.0.0.1'}           | ${'00001010000000000000000000000001'}
 
     `('returns $expected binary version for $address',({address, expected}) => {
     const ip = new IP(address);
@@ -66,6 +64,21 @@ describe('IPv4, testing toInteger method', () => {
 });
 });
 
+describe('IPv4, testing toHex method', () => {
+    test.each`
+    address              | expected
+    ${'101.200.57'}      | ${'65c83900'}
+    ${'255.255'}         | ${'ffff0000'}
+    ${'192.168.114.42'}  | ${'c0a8722a'}
+    ${'192.168.0.1'}     | ${'c0a80001'}
+    ${'255.168.114.128'} | ${'ffa87280'}
+    ${'10.0.0.1'}        | ${'a000001'}
+    `('returns $expected hex for ip $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.toHEX()).toBe(expected);
+});
+});
+
 describe('Invalid IPv4, testing validation methods', () => {
     const testAddr = ['1920.168.114.42', 'def.', '...', '.', '192.168..', 'hello there!'];
     for (let i = 0; i < testAddr.length; i++) {
@@ -89,7 +102,7 @@ describe('IPv6, valid full dotted ip, testing validation methods', () => {
             expect(ip.version).toBe(6);
         });
 
-        test('addres returns address', () => {
+        test('ip.addres returns address', () => {
             expect(ip.address).toBe(testAddr[i]);
         });
 
@@ -115,37 +128,45 @@ describe('IPv6, valid short notation, testing toRepresentation method', () => {
 });
 
 //not working with BIgInts
-// describe('IPv6, testing toInteger method', () => {
-//     const addr = ['0000:0000:0000:480e:be7b:9d58:566c:87ce', '2002:babe::abc:2:3', '7201::4ac1:1e:1f:ffff:fab'];
-//     const expected = [BigInt('340282366920938463463374'), BigInt('42549468040371534509101895686289489923'), BigInt('151537183816339297354012318334717988779')];
-//
-//     test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
-//         const ip = new IP(addr[0]);
-//         expect(ip.toInteger()).toBe(expected[0]);
-//     });
-//
-//     test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
-//         const ip = new IP(addr[1]);
-//         expect(ip.toInteger()).toBe(expected[1]);
-//     });
-//
-//     test(`returns ${expected[2]} integer for ${addr[2]}`, () => {
-//         const ip = new IP(addr[2]);
-//         expect(ip.toInteger()).toBe(expected[2]);
-//     });
-// });
+describe('IPv6, testing toInteger method', () => {
+    const addr = ['::abcd:c7ce', '2002:babe::abc:2:3'];
+    const expected = [ BigInt('2882389966'), BigInt('42549468040371534509101895686289489923n') ];
+
+    test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
+        const ip = new IP(addr[0]);
+        expect(ip.toInteger()).toBe(expected[0]);
+    });
+
+    test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
+        const ip = new IP(addr[1]);
+        expect(ip.toInteger()).toBe(expected[1]);
+    });
+});
 
 describe('IPv6, valid ip, testing toBimary method', () => {
     test.each`
     address                 | expected
-    ${'2001:dead:beef:0051:c01d:c01a:abcd:0987'}  | ${'0010000000000001.1101111010101101.1011111011101111.0000000001010001.1100000000011101.1100000000011010.1010101111001101.0000100110000111'}
-    ${'2002:babe:0000:0000:47b3:0000:0002:0003'}  | ${'0010000000000010.1011101010111110.0000000000000000.0000000000000000.0100011110110011.0000000000000000.0000000000000010.0000000000000011'}
-    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${'0111001000000001.1101111010101101.1011111011101111.0100101011000001.1100000000011110.1100000000011111.1111111111111111.0000111110101011'}
-    ${'2001:db8:0000:0000:0000:0000:00ff:ffff'}   | ${'0010000000000001.0000110110111000.0000000000000000.0000000000000000.0000000000000000.0000000000000000.0000000011111111.1111111111111111'}
+    ${'2001:dead:beef:0051:c01d:c01a:abcd:0987'}  | ${'00100000000000011101111010101101101111101110111100000000010100011100000000011101110000000001101010101011110011010000100110000111'}
+    ${'2002:babe:0000:0000:47b3:0000:0002:0003'}  | ${'00100000000000101011101010111110000000000000000000000000000000000100011110110011000000000000000000000000000000100000000000000011'}
+    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${'01110010000000011101111010101101101111101110111101001010110000011100000000011110110000000001111111111111111111110000111110101011'}
+    ${'2001:db8::ff:ffff'}   | ${'00100000000000010000110110111000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111111111111'}
 
     `('returns binary version for $address',({address, expected}) => {
     const ip = new IP(address);
     expect(ip.toBinary()).toBe(expected);
+});
+});
+
+describe('IPv6, testing toHex method', () => {
+    test.each`
+    address              | expected
+    ${'2001:dead:beef:0051:c01d:c01a:abcd:0987'} | ${'2001deadbeef0051c01dc01aabcd0987'}
+    ${'2002:babe:0000:0000:47b3:0000:0002:0003'} | ${'2002babe0000000047b3000000020003'}
+    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'} | ${'7201deadbeef4ac1c01ec01fffff0fab'}
+    ${'2001:db8::ff:ffff'}                       | ${'20010db8000000000000000000ffffff'}
+    `('returns $expected hex for ip $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.toHEX()).toBe(expected);
 });
 });
 
