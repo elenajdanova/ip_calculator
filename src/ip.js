@@ -6,7 +6,7 @@ const IPv6MAXbig = (2n ** 128n) - 1n;
 * @class IP
 * @param {string} address
 * host = new IP("184.170.96.196");
-* @return {object} -> IP{address:"184.170.96.196", version: 4}
+* @return {object} -> IP{address:"184.170.96.196", version: 4, integer: 0, short: 0}
 */
 
 export default class IP {
@@ -23,14 +23,6 @@ export default class IP {
     // Public methods
 
     /**
-    * printVersion - Prints this IP version.
-    * @return {integer} -> version: 4
-    */
-    printVersion () {
-        return this.version;
-    }
-
-    /**
     * printInfo - Shows IANA allocation information for the current IP address.
     * @return {string} ->LOOPBACK
     */
@@ -40,7 +32,7 @@ export default class IP {
 
     /**
     * toInteger - Converts dotquad or hextet IP to integer
-    * @return {integer} -> 2130706432
+    * @return {BigInt} -> 2130706432
     */
     toInteger () {
         let bigInt;
@@ -82,7 +74,7 @@ export default class IP {
 
     /**
     * toBinary - Converts decimal IP to full-length binary representation.
-    * @return {string} -> 01111111.00000000.00000000.00000001
+    * @return {string} -> 01111111000000000000000000000001
     */
     toBinary() {
         if (this.integer === 0) {
@@ -101,7 +93,7 @@ export default class IP {
     }
 
     /**
-    * toHEX - Converts decimal IP to hexadecimal representation.
+    * toHEX - Converts both IP versions to hexadecimal representation.
     * @return {string} -> 7f000001
     */
     toHEX() {
@@ -126,7 +118,8 @@ export default class IP {
                     continue;
                 } else {
                     splittedAddr.splice(sRange[i][0], sRange[i][1]);
-                    return splittedAddr.join('.');
+                    this.short = splittedAddr.join('.');
+                    return this.short;
                 }
             }
         } else {
@@ -159,10 +152,10 @@ export default class IP {
                     }
                 }
             }
-            return splitted.join(':');
+            this.short = splitted.join(':');
+            return this.short;
         }
     }
-
 
     // Private methods
 
@@ -291,7 +284,7 @@ export default class IP {
     }
 
     /**
-    * toRepresentation - Converts shortened version to canonical representation of the IP.
+    * toRepresentation - Converts short version to canonical representation of IP.
     * IP('::1').address
     * @private
     * @param  {array} splittedAddr
