@@ -79,6 +79,20 @@ describe('IPv4, testing toHex method', () => {
 });
 });
 
+describe('IPv4, testing toCompressed method', () => {
+    test.each`
+    address             | expected
+    ${'101.200.57.0'}   | ${'101.200.57'}
+    ${'255.255.0.0'}    | ${'255.255'}
+    ${'192.168.114.42'} | ${'192.168.114.42'}
+    ${'197.0.0.3'}      | ${'197.0.0.3'}
+    ${'5.0.0.0'}        | ${'5'}
+    `('returns $expected short representation of $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.toCompressed()).toBe(expected);
+});
+});
+
 describe('Invalid IPv4, testing validation methods', () => {
     const testAddr = ['1920.168.114.42', 'def.', '...', '.', '192.168..', 'hello there!'];
     for (let i = 0; i < testAddr.length; i++) {

@@ -20,7 +20,6 @@ export default class IP {
         this.address = this._checkAddress(address, this.version);
     }
 
-
     // Public methods
 
     /**
@@ -93,7 +92,7 @@ export default class IP {
         let v = this.version;
         let marks = { 4: 32, 6: 128 };
 
-        if (binary.length < marks[v]) {
+        if ( binary.length < marks[v] ) {
             while (binary.length < marks[v]) {
                 binary = '0' + binary;
             }
@@ -114,11 +113,23 @@ export default class IP {
 
     /**
     * toCompressed - Compress an IP address to its shortest possible form.
-    * IP('127.0.0.1').toCompressed
+    * IP('127.1.0.0').toCompressed
     * @return {string} -> "127.1"
     */
     toCompressed() {
-        return;
+        if (this.version === 4) {
+            let splittedAddr = this.address.split('.');
+            let sRange = [[1, 3], [2, 2], [3, 1], [0,0]];
+
+            for (let i = splittedAddr.length-1; i>=0; i--) {
+                if (splittedAddr[i] === '0') {
+                    continue;
+                } else {
+                    splittedAddr.splice(sRange[i][0], sRange[i][1]);
+                    return splittedAddr.join('.');
+                }
+            }
+        }
     }
 
 
@@ -174,7 +185,7 @@ export default class IP {
             6: [':', this._isIPv6, 8]
         };
         let splittedAddr = addr.split( marks[v][0] );
-        if ( marks[v][1].call(this, splittedAddr) ) {
+        if ( marks[v][1].call(this, splittedAddr) ) { //TODO: make ifs more readable
             if (splittedAddr.length === marks[v][2] && this.short === 0) {
                 return addr;
             } else {
@@ -238,7 +249,7 @@ export default class IP {
             if (cleanedAddr[i].length === 0) {
                 cleanedAddr.splice(i, 1);
                 isShort = true;
-                i--;
+                i--; //code  chunk similar to toCompressed method
                 // for addr '::1' can happen that there are 2 empty strings
                 // together, so by i-- we check every el of array but not next but one
             } else if (cleanedAddr[i].length < 4) {
