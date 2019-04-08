@@ -129,6 +129,37 @@ export default class IP {
                     return splittedAddr.join('.');
                 }
             }
+        } else {
+            let splitted = this.address.split(':');
+            // removing longest zero group
+            let [startOfLongest, longestLength] = longestZerosGroup(splitted);
+            let last = startOfLongest + longestLength;
+            if ( last === 7) {
+                longestLength++;
+                splitted.push('');
+            }
+            splitted.splice(startOfLongest, longestLength, '');
+            if (startOfLongest === 0) { splitted.unshift(''); }
+
+            // removing leading zeros
+            loopHex:
+            for (let i = 0; i < splitted.length; i++) {
+                if (splitted[i] === '0000') {
+                    splitted.splice(i, 1, '0');
+                    i++;
+                }
+                loopStr:
+                for (let j = 0; j < splitted[i].length; j++) {
+                    if (splitted[i][j] === '0') {
+                        splitted[i] = splitted[i].substring(j+1);
+                        j--;
+                        continue;
+                    } else {
+                        break loopStr;
+                    }
+                }
+            }
+            return splitted.join(':');
         }
     }
 
@@ -320,6 +351,34 @@ export default class IP {
 
 
 }//IP class end
+
+
+/**
+ * longestZerosGroup - Helper fn counting longest consecutive zeros for shortening IPv6
+ * "0000:0000:0000:0000:0000:0000:0000:0001"
+ * @private
+ * @param  {array} zeros
+ * @return {array} -> [0, 7]
+ */
+const longestZerosGroup = (splittedAddr) => {
+    let current = 0;
+    let currentLongest = 0;
+    let startOfLongest = 0;
+    while (current < splittedAddr.length - 2) {
+        let startOfRun = current;
+        while (current < splittedAddr.length - 1 &&
+              splittedAddr[current] === '0000') {
+            current++;
+        }
+        if (current - startOfRun > currentLongest) {
+            startOfLongest = startOfRun;
+            currentLongest = current - startOfRun;
+        }
+        current++;
+    }
+    return [startOfLongest, currentLongest];
+};
+
 
 // console.log( ip = new IP('2002:babe::abc:2:3') );
 // console.log(ip.toInteger());
