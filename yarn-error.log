@@ -1,0 +1,54 @@
+Arguments: 
+  /usr/bin/node /usr/local/bin/yarn install
+
+PATH: 
+  /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+
+Yarn version: 
+  1.15.2
+
+Node version: 
+  8.10.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/babel%2fcore: Request "https://registry.yarnpkg.com/babel%2fcore" returned a 405
+      at Request.params.callback [as _callback] (/usr/local/lib/node_modules/yarn/lib/cli.js:66067:18)
+      at Request.self.callback (/usr/local/lib/node_modules/yarn/lib/cli.js:129541:22)
+      at emitTwo (events.js:126:13)
+      at Request.emit (events.js:214:7)
+      at Request.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:130513:10)
+      at emitOne (events.js:116:13)
+      at Request.emit (events.js:211:7)
+      at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/yarn/lib/cli.js:130435:12)
+      at Object.onceWrapper (events.js:313:30)
+      at emitNone (events.js:111:20)
+
+npm manifest: 
+  {
+    "name": "ip_calculator",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "Elena Jdanova",
+    "license": "MIT",
+    "devDependencies": {
+      "babel-cli": "^6.26.0",
+      "babel-jest": "^24.5.0",
+      "babel/core": "^7.4.0",
+      "babel/preset-env": "^7.4.2",
+      "eslint": "^5.15.3",
+      "eslint-plugin-jest": "^22.4.1",
+      "jest": "^24.5.0"
+    },
+    "scripts": {
+      "test": "jest"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
