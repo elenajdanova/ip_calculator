@@ -1,5 +1,4 @@
-const IPv4MAX = Math.pow(2, 32) - 1;
-const IPv6MAXbig = (2n ** 128n) - 1n;
+import { IPv4MAX, IPv6MAXbig } from '../index.js';
 
 /**
 * Represents a single IP address v4 or v6.
