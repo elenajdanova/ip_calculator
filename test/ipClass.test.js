@@ -106,6 +106,38 @@ describe('Invalid IPv4, testing validation methods', () => {
     }
 });
 
+describe('IPv4, valid, testing ALL methods', () => {
+    const testAddr ='184.170.76.186';
+    const ip = new IP(testAddr);
+
+    test(`version returns 4 for address ${testAddr}`, () => {
+        expect(ip.version).toBe(4);
+    });
+
+    test('addres returns valid address', () => {
+        expect(ip.address).toBe(testAddr);
+    });
+
+    test('toInteger returns big int', () => {
+        expect(ip.toInteger()).toBe(3098168506);
+    });
+
+    test('toDottedNotation returns address from big int', () => {
+        expect(ip.toDottedNotation(ip.toInteger())).toBe('184.170.76.186');
+    });
+
+    test('toBinary returns binary nr', () => {
+        expect(ip.toBinary()).toBe('10111000101010100100110010111010');
+    });
+
+    test('toHex returns hexadecimal nr', () => {
+        expect(ip.toHEX()).toBe('b8aa4cba');
+    });
+
+    test('toCompressed returns short ip if possible', () => {
+        expect(ip.toCompressed()).toBe('184.170.76.186');
+    });
+});
 
 describe('IPv6, valid full dotted ip, testing validation methods', () => {
     const testAddr = ['2001:dead:beef:0051:c01d:c01a:abcd:0987', '2002:babe:0000:0000:47b3:0000:0002:0003', '7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'];
@@ -141,22 +173,35 @@ describe('IPv6, valid short notation, testing toRepresentation method', () => {
 });
 });
 
-//not working with BIgInts
-describe('IPv6, testing toInteger method', () => {
-    const addr = ['::abcd:c7ce', '2002:babe::abc:2:3'];
-    const expected = [ BigInt('2882389966'), BigInt('42549468040371534509101895686289489923n') ];
-
-    test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
-        const ip = new IP(addr[0]);
-        expect(ip.toInteger()).toBe(expected[0]);
-    });
-
-    test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
-        const ip = new IP(addr[1]);
-        expect(ip.toInteger()).toBe(expected[1]);
-    });
+describe('IPv6, testing toCompressed method', () => {
+    test.each`
+    address                                      | expected
+    ${'2002:babe:0000:0000:47b3:0000:0002:0013'} | ${'2002:babe::47b3:0:2:13'}
+    ${'0000:0000:0000:0000:0000:c01a:abcd:0987'} | ${'::c01a:abcd:987'}
+    ${'0ace:00cd:f987:0000:0000:0000:0000:0000'} | ${'ace:cd:f987::'}
+    ${'1ace:00cd:f987:0000:0e57:0000:0006:0010'} | ${'1ace:cd:f987::e57:0:6:10'}
+    `('returns $expected short representation of $address',({address, expected}) => {
+    const ip = new IP(address);
+    expect(ip.toCompressed()).toBe(expected);
+});
 });
 
+// //not working with BIgInts
+// describe('IPv6, testing toInteger method', () => {
+//     const addr = ['::abcd:c7ce', '2002:babe::abc:2:3'];
+//     const expected = [ BigInt('2882389966'), BigInt('42549468040371534509101895686289489923n') ];
+//
+//     test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
+//         const ip = new IP(addr[0]);
+//         expect(ip.toInteger()).toBe(expected[0]);
+//     });
+//
+//     test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
+//         const ip = new IP(addr[1]);
+//         expect(ip.toInteger()).toBe(expected[1]);
+//     });
+// });
+//
 describe('IPv6, valid ip, testing toBimary method', () => {
     test.each`
     address                 | expected
@@ -197,6 +242,35 @@ describe('Invalid IPv6, testing validation methods', () => {
     }
 });
 
+describe('IPv6, valid, testing ALL methods', () => {
+    const testAddr ='FE80:0000:0000:0000:0202:B3FF:FE1E:8329';
+    const ip = new IP(testAddr);
+
+    test(`version returns 6 for address ${testAddr}`, () => {
+        expect(ip.version).toBe(6);
+    });
+
+    test('addres returns valid address', () => {
+        expect(ip.address).toBe(testAddr);
+    });
+
+    test('toDottedNotation returns address from big int', () => {
+        expect(ip.toDottedNotation(ip.toInteger())).toBe('fe80:0000:0000:0000:0202:b3ff:fe1e:8329');
+    });
+    // missing toInteger method
+    test('toBinary returns binary nr', () => {
+        expect(ip.toBinary()).toBe('11111110100000000000000000000000000000000000000000000000000000000000001000000010101100111111111111111110000111101000001100101001');
+    });
+
+    test('toHex returns hexadecimal nr', () => {
+        expect(ip.toHEX()).toBe('fe800000000000000202b3fffe1e8329');
+    });
+
+    test('toCompressed returns short ip if possible', () => {
+        expect(ip.toCompressed()).toBe('FE80::202:B3FF:FE1E:8329');
+    });
+});
+
 describe('IPv4 valid integer, testing validation methods', () => {
     test.each`
   address                        | expected
@@ -226,7 +300,7 @@ describe('IPv6, valid big integer, testing validation methods', () => {
 });
 
 describe('Invalid integer, testing validation methods', () => {
-    const testAddr = ['-15', '0', 0, -130, 340282366920938463463374607431798211456n];
+    const testAddr = ['-15', '0', 0, -130, BigInt(340282366920938463463374607431798211456)];
     for (let i = 0; i < testAddr.length; i++) {
         test(`${testAddr[i]} throws error`, () => {
             function addressError() {

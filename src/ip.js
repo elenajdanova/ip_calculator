@@ -1,12 +1,11 @@
-const IPv4MAX = Math.pow(2, 32) - 1;
-const IPv6MAXbig = (2n ** 128n) - 1n;
+import { IPv4MAX, IPv6MAXbig } from '../index.js';
 
 /**
 * Represents a single IP address v4 or v6.
 * @class IP
 * @param {string} address
 * host = new IP("184.170.96.196");
-* @return {object} -> IP{address:"184.170.96.196", version: 4}
+* @return {object} -> IP{address:"184.170.96.196", version: 4, integer: 0, short: 0}
 */
 
 export default class IP {
@@ -23,14 +22,6 @@ export default class IP {
     // Public methods
 
     /**
-    * printVersion - Prints this IP version.
-    * @return {integer} -> version: 4
-    */
-    printVersion () {
-        return this.version;
-    }
-
-    /**
     * printInfo - Shows IANA allocation information for the current IP address.
     * @return {string} ->LOOPBACK
     */
@@ -40,7 +31,7 @@ export default class IP {
 
     /**
     * toInteger - Converts dotquad or hextet IP to integer
-    * @return {integer} -> 2130706432
+    * @return {BigInt} -> 2130706432
     */
     toInteger () {
         let bigInt;
@@ -82,7 +73,7 @@ export default class IP {
 
     /**
     * toBinary - Converts decimal IP to full-length binary representation.
-    * @return {string} -> 01111111.00000000.00000000.00000001
+    * @return {string} -> 01111111000000000000000000000001
     */
     toBinary() {
         if (this.integer === 0) {
@@ -101,7 +92,7 @@ export default class IP {
     }
 
     /**
-    * toHEX - Converts decimal IP to hexadecimal representation.
+    * toHEX - Converts both IP versions to hexadecimal representation.
     * @return {string} -> 7f000001
     */
     toHEX() {
@@ -126,12 +117,44 @@ export default class IP {
                     continue;
                 } else {
                     splittedAddr.splice(sRange[i][0], sRange[i][1]);
-                    return splittedAddr.join('.');
+                    this.short = splittedAddr.join('.');
+                    return this.short;
                 }
             }
+        } else {
+            let splitted = this.address.split(':');
+            // removing longest zero group
+            let [startOfLongest, longestLength] = longestZerosGroup(splitted);
+            let last = startOfLongest + longestLength;
+            if ( last === 7) {
+                longestLength++;
+                splitted.push('');
+            }
+            splitted.splice(startOfLongest, longestLength, '');
+            if (startOfLongest === 0) { splitted.unshift(''); }
+
+            // removing leading zeros
+            loopHex:
+            for (let i = 0; i < splitted.length; i++) {
+                if (splitted[i] === '0000') {
+                    splitted.splice(i, 1, '0');
+                    i++;
+                }
+                loopStr:
+                for (let j = 0; j < splitted[i].length; j++) {
+                    if (splitted[i][j] === '0') {
+                        splitted[i] = splitted[i].substring(j+1);
+                        j--;
+                        continue;
+                    } else {
+                        break loopStr;
+                    }
+                }
+            }
+            this.short = splitted.join(':');
+            return this.short;
         }
     }
-
 
     // Private methods
 
@@ -260,7 +283,7 @@ export default class IP {
     }
 
     /**
-    * toRepresentation - Converts shortened version to canonical representation of the IP.
+    * toRepresentation - Converts short version to canonical representation of IP.
     * IP('::1').address
     * @private
     * @param  {array} splittedAddr
@@ -320,6 +343,34 @@ export default class IP {
 
 
 }//IP class end
+
+
+/**
+ * longestZerosGroup - Helper fn counting longest consecutive zeros for shortening IPv6
+ * "0000:0000:0000:0000:0000:0000:0000:0001"
+ * @private
+ * @param  {array} zeros
+ * @return {array} -> [0, 7]
+ */
+const longestZerosGroup = (splittedAddr) => {
+    let current = 0;
+    let currentLongest = 0;
+    let startOfLongest = 0;
+    while (current < splittedAddr.length - 2) {
+        let startOfRun = current;
+        while (current < splittedAddr.length - 1 &&
+              splittedAddr[current] === '0000') {
+            current++;
+        }
+        if (current - startOfRun > currentLongest) {
+            startOfLongest = startOfRun;
+            currentLongest = current - startOfRun;
+        }
+        current++;
+    }
+    return [startOfLongest, currentLongest];
+};
+
 
 // console.log( ip = new IP('2002:babe::abc:2:3') );
 // console.log(ip.toInteger());
