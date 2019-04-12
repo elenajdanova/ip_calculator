@@ -17,23 +17,22 @@ export default class Network extends IP {
     */
     constructor (address, prefix) {
         super(address);
-        this.prefix = prefix;
-    }
-
-    /**
-    * getNetmask - Gets subnet mask from prefix
-    * @return {string} ->"255.0.0.0"
-    */
-    getNetmask () {
-        return this.prefix;
+        this.prefix = this._checkPrefix(prefix);
     }
 
     /**
     * getPrefix - Returns this IP prefix and validates it
     * @return {integer} -> prefix: 25
     */
-    getPrefix () {
-        return this.prefix;
+    _checkPrefix (prefix) {
+        if (this.version === 4) {
+            if (prefix > 1 && prefix < 32) {
+                return this.prefix;
+            } else {
+                throw new Error('Tips: Invalid prefix');
+            }
+        }
+
     }
 
     /**
