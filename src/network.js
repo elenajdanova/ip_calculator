@@ -98,7 +98,7 @@ export default class Network extends IP {
             return this.address;
         } else {
             let host = this.toDottedNotation(this.networkToInteger() + 1n);
-            return this.toCompressed (host, this.version);  
+            return this.toCompressed (host, this.version);
         }
     }
 
@@ -138,7 +138,10 @@ export default class Network extends IP {
     * @return {array} -> ['127.0.0.1','127.255.255.255']
     */
     hostRange () {
-        return;
+        let range = [];
+        range.push(this.hostFirst());
+        range.push(this.hostLast());
+        return range;
     }
 
     /**
