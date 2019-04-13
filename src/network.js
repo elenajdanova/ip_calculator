@@ -21,18 +21,28 @@ export default class Network extends IP {
     }
 
     /**
-    * getPrefix - Returns this IP prefix and validates it
+    * _checkPrefix - Returns this IP prefix and validates it
     * @return {integer} -> prefix: 25
     */
     _checkPrefix (prefix) {
         if (this.version === 4) {
-            if (prefix > 1 && prefix < 32) {
-                return this.prefix;
-            } else {
-                throw new Error('Tips: Invalid prefix');
+            if (prefix > 0 && prefix < 32) {
+                return prefix;
+            }
+        } else {
+            if (prefix > 0 && prefix < 128) {
+                return prefix;
             }
         }
+        throw new Error('Tips: Invalid prefix');
+    }
 
+    /**
+    * getMask - Returns network mask from the prefix
+    * @return {string} -> 255.0.0.0
+    */
+    getMask () {
+        return;
     }
 
     /**

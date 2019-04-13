@@ -1,4 +1,4 @@
-import { IPv4MAX, IPv6MAXbig } from '../index.js';
+import { IPv4MAX, IPv6MAX } from '../index.js';
 
 /**
 * Represents a single IP address v4 or v6.
@@ -176,7 +176,7 @@ export default class IP {
             const reNum = /^[0-9n]+$/;
 
             if ( reNum.test(addr) ) {
-                if (addr > IPv6MAXbig || addr <= 0) {
+                if (addr > IPv6MAX || addr <= 0) {
                     throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
                 } else if (addr <= IPv4MAX) {
                     return 4;
