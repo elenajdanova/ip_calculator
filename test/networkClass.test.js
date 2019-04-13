@@ -38,6 +38,10 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     test('test hostRange method', () => {
         expect(net.hostRange()).toEqual(['192.168.114.1', '192.168.114.254']);
     });
+
+    test('test networkSize method', () => {
+        expect(net.networkSize()).toBe(BigInt('254'));
+    });
 });
 
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
@@ -73,5 +77,9 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
 
     test('test hostRange method', () => {
         expect(net.hostRange()).toEqual(['fe80::1', 'fe80:0000:003f:ffff:ffff:ffff:ffff:ffff']);
+    });
+
+    test('test networkSize method', () => {
+        expect(net.networkSize()).toBe(BigInt('77371252455336267181195264'));
     });
 });

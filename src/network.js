@@ -146,9 +146,12 @@ export default class Network extends IP {
 
     /**
     * networkSize - Returns number of ips within the network.
-    * @return {integer} -> 16777214
+    * @return {number} -> 16777214
     */
     networkSize () {
-        return;
+        let marks = {4: 32n, 6: 128n};
+        let size = 2n ** (marks[this.version] - this.prefix);
+        return (this.version === 4) ? size - 2n : size;
+
     }
-}// end Network class
+} // end Network class
