@@ -49,20 +49,46 @@ describe('IPv4, valid short notation, testing toRepresentation method', () => {
 });
 
 describe('IPv4, testing toInteger method', () => {
-    test.each`
-    address              | expected
-    ${'101.200.57'}      | ${1707620608}
-    ${'255.255'}         | ${4294901760}
-    ${'192.168.114.42'}  | ${3232264746}
-    ${'192.168.0.1'}     | ${3232235521}
-    ${'255.168.114.128'} | ${4289229440}
-    ${'10.0.0.1'}        | ${167772161}
-    ${'0.0.0.0'}         | ${0}
-    `('returns $expected for ip $address',({address, expected}) => {
-    const ip = new IP(address);
-    expect(ip.toInteger()).toBe(expected);
+    const addr = ['101.200.57', '255.255', '192.168.114.42', '192.168.0.1', '255.168.114.128', '10.0.0.1', '0.0.0.0'];
+    const expected = [ BigInt('1707620608'), BigInt('4294901760'), BigInt('3232264746'), BigInt('3232235521'), BigInt('4289229440'), BigInt('167772161'), BigInt('0')];
+
+    test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
+        const ip = new IP(addr[0]);
+        expect(ip.toInteger()).toBe(expected[0]);
+    });
+
+    test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
+        const ip = new IP(addr[1]);
+        expect(ip.toInteger()).toBe(expected[1]);
+    });
+
+    test(`returns ${expected[2]} integer for ${addr[2]}`, () => {
+        const ip = new IP(addr[2]);
+        expect(ip.toInteger()).toBe(expected[2]);
+    });
+
+    test(`returns ${expected[3]} integer for ${addr[3]}`, () => {
+        const ip = new IP(addr[3]);
+        expect(ip.toInteger()).toBe(expected[3]);
+    });
+
+    test(`returns ${expected[4]} integer for ${addr[4]}`, () => {
+        const ip = new IP(addr[4]);
+        expect(ip.toInteger()).toBe(expected[4]);
+    });
+
+    test(`returns ${expected[5]} integer for ${addr[5]}`, () => {
+        const ip = new IP(addr[5]);
+        expect(ip.toInteger()).toBe(expected[5]);
+    });
+
+    test(`returns ${expected[6]} integer for ${addr[6]}`, () => {
+        const ip = new IP(addr[6]);
+        expect(ip.toInteger()).toBe(expected[6]);
+    });
+
 });
-});
+
 
 describe('IPv4, testing toHex method', () => {
     test.each`
@@ -119,7 +145,7 @@ describe('IPv4, valid, testing ALL methods', () => {
     });
 
     test('toInteger returns big int', () => {
-        expect(ip.toInteger()).toBe(3098168506);
+        expect(ip.toInteger()).toBe( BigInt('3098168506') );
     });
 
     test('toDottedNotation returns address from big int', () => {
@@ -186,22 +212,21 @@ describe('IPv6, testing toCompressed method', () => {
 });
 });
 
-// //not working with BIgInts
-// describe('IPv6, testing toInteger method', () => {
-//     const addr = ['::abcd:c7ce', '2002:babe::abc:2:3'];
-//     const expected = [ BigInt('2882389966'), BigInt('42549468040371534509101895686289489923n') ];
-//
-//     test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
-//         const ip = new IP(addr[0]);
-//         expect(ip.toInteger()).toBe(expected[0]);
-//     });
-//
-//     test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
-//         const ip = new IP(addr[1]);
-//         expect(ip.toInteger()).toBe(expected[1]);
-//     });
-// });
-//
+describe('IPv6, testing toInteger method', () => {
+    const addr = ['::abcd:c7ce', '2002:babe::abc:2:3'];
+    const expected = [ BigInt('2882389966'), BigInt('42549468040371534509101895686289489923') ];
+
+    test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
+        const ip = new IP(addr[0]);
+        expect(ip.toInteger()).toBe(expected[0]);
+    });
+
+    test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
+        const ip = new IP(addr[1]);
+        expect(ip.toInteger()).toBe(expected[1]);
+    });
+});
+
 describe('IPv6, valid ip, testing toBimary method', () => {
     test.each`
     address                 | expected
@@ -271,18 +296,32 @@ describe('IPv6, valid, testing ALL methods', () => {
     });
 });
 
-describe('IPv4 valid integer, testing validation methods', () => {
-    test.each`
-  address                        | expected
-  ${1707620608}                  | ${'101.200.57.0'}
-  ${4294901760}                  | ${'255.255.0.0'}
-  ${'192'}                       | ${'0.0.0.192'}
-  ${'95465'}                     | ${'0.1.116.233'}
-  `('returns $expected for ip $address',({address, expected}) => {
-    const ip = new IP(address);
-    expect(ip.address).toBe(expected);
+describe('IPv4, valid integer, testing validation methods', () => {
+    const expected = ['101.200.57.0', '255.255.0.0', '0.0.0.192', '0.1.116.233'];
+    const addr = [ BigInt('1707620608'), BigInt('4294901760'), BigInt('192'), BigInt('95465')];
+
+    test(`returns ${expected[0]} for ${addr[0]}`, () => {
+        const ip = new IP(addr[0]);
+        expect(ip.address).toBe(expected[0]);
+    });
+
+    test(`returns ${expected[1]} for ${addr[1]}`, () => {
+        const ip = new IP(addr[1]);
+        expect(ip.address).toBe(expected[1]);
+    });
+
+    test(`returns ${expected[2]} for ${addr[2]}`, () => {
+        const ip = new IP(addr[2]);
+        expect(ip.address).toBe(expected[2]);
+    });
+
+    test(`returns ${expected[3]} for ${addr[3]}`, () => {
+        const ip = new IP(addr[3]);
+        expect(ip.address).toBe(expected[3]);
+    });
+
 });
-});
+
 
 describe('IPv6, valid big integer, testing validation methods', () => {
     const addr = [ BigInt('340282366920938463463374'), BigInt('27028236938463463374')];
