@@ -26,11 +26,11 @@ export default class Network extends IP {
     */
     _checkPrefix (prefix) {
         if (this.version === 4) {
-            if (prefix > 0 && prefix < 32) {
+            if (prefix > 0 && prefix <= 32) {
                 return BigInt(prefix);
             }
         } else {
-            if (prefix > 0 && prefix < 128) {
+            if (prefix > 0 && prefix <= 128) {
                 return BigInt(prefix);
             }
         }
@@ -71,12 +71,12 @@ export default class Network extends IP {
     * @return {string} -> 127.255.255.255
     */
     getBroadcast () {
-        return;
+        return this.toDottedNotation(this.broadcastToLong());
     }
 
     /**
     * broadcastToLong - Returns broadcast as long.
-    * @return {integer} ->2147483647
+    * @return {BigInt} ->2147483647
     */
     broadcastToLong () {
         if (this.version === 4) {
