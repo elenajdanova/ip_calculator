@@ -11,6 +11,10 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
         expect(net.maskToInteger()).toBe(BigInt('4294967040'));
     });
 
+    test('test networkToInteger method', () => {
+        expect(net.networkToInteger()).toBe(BigInt('3232264704'));
+    });
+
     test('test getNetwork method', () => {
         expect(net.getNetwork()).toBe('192.168.114.0');
     });

@@ -89,7 +89,6 @@ describe('IPv4, testing toInteger method', () => {
 
 });
 
-
 describe('IPv4, testing toHex method', () => {
     test.each`
     address              | expected
@@ -322,7 +321,6 @@ describe('IPv4, valid integer, testing validation methods', () => {
 
 });
 
-
 describe('IPv6, valid big integer, testing validation methods', () => {
     const addr = [ BigInt('340282366920938463463374'), BigInt('27028236938463463374')];
     const expected = ['0000:0000:0000:480e:be7b:9d58:566c:87ce', '0000:0000:0000:0001:7717:964b:3634:c7ce'];
@@ -339,7 +337,7 @@ describe('IPv6, valid big integer, testing validation methods', () => {
 });
 
 describe('Invalid integer, testing validation methods', () => {
-    const testAddr = ['-15', '0', 0, -130, BigInt(340282366920938463463374607431798211456)];
+    const testAddr = ['-15', '0', 0, -130, BigInt('340282366920938463463374607431798211456')];
     for (let i = 0; i < testAddr.length; i++) {
         test(`${testAddr[i]} throws error`, () => {
             function addressError() {

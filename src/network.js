@@ -51,20 +51,19 @@ export default class Network extends IP {
     }
 
     /**
+    * networkToInteger - Returns network as bigInt.
+    * @return {BigInt} -> 21307064320
+    */
+    networkToInteger () {
+        return this.toInteger() & this.maskToInteger();    
+    }
+
+    /**
     * getNetwork - Returns network part of the address
     * @return {string} -> 127.0.0.0
     */
     getNetwork () {
-        let network = this.toInteger() & this.maskToInteger();
-        return this.toDottedNotation(network);
-    }
-
-    /**
-    * networkToLong - Returns network as long.
-    * @return {integer} -> 2130706432
-    */
-    networkToLong () {
-        return;
+        return this.toDottedNotation(this.networkToInteger());
     }
 
     /**
