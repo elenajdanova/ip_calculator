@@ -108,7 +108,7 @@ export default class IP {
     * IP('127.1.0.0').toCompressed
     * @return {string} -> "127.1"
     */
-    toCompressed() {
+    toCompressed() { //or need to make it take a param ?
         if (this.version === 4) {
             let splittedAddr = this.address.split('.');
             let sRange = [[1, 3], [2, 2], [3, 1], [0,0]];

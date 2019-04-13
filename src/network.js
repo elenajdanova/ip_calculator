@@ -60,10 +60,11 @@ export default class Network extends IP {
 
     /**
     * getNetwork - Returns network part of the address
-    * @return {string} -> 127.0.0.0
+    * @return {string} -> 127
     */
     getNetwork () {
-        return this.toDottedNotation(this.networkToInteger());
+        let ip = new IP(this.networkToInteger())
+        return ip.toCompressed();
     }
 
     /**

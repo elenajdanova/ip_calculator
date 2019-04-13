@@ -16,7 +16,7 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     });
 
     test('test getNetwork method', () => {
-        expect(net.getNetwork()).toBe('192.168.114.0');
+        expect(net.getNetwork()).toBe('192.168.114');
     });
 
     test('test broadcastToLong method', () => {
@@ -44,7 +44,7 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
     });
 
     test('test getNetwork method', () => {
-        expect(net.getNetwork()).toBe('fe80:0000:0000:0000:0000:0000:0000:0000');
+        expect(net.getNetwork()).toBe('fe80::');
     });
 
     test('test broadcastToLong method', () => {
