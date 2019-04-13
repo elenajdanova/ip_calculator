@@ -44,8 +44,8 @@ export default class IP {
             let joinedAddr = this.address.split(':').join('');
             bigInt = BigInt('0x' + joinedAddr);
         }
-        this.integer = bigInt;
-        return bigInt;
+        this.integer = BigInt(bigInt);
+        return BigInt(bigInt);
     }
 
     /**
@@ -56,8 +56,9 @@ export default class IP {
     toDottedNotation(bigInt) {
         if (this.version === 4) {
             return (
-                [ (bigInt>>>24), (bigInt>>16 & 255), (bigInt>>8 & 255),
-                    (bigInt & 255)
+                [ (bigInt>>24n & 255n), (bigInt>>16n & 255n),
+                  (bigInt>>8n & 255n),
+                    (bigInt & 255n)
                 ].join('.')
             );
         } else {

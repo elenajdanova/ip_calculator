@@ -1,5 +1,5 @@
 import IP from './ip.js';
-import { IPv4MAX, IPv6MAXbig } from '../index.js';
+import { IPv4MAX, IPv6MAX } from '../index.js';
 
 /**
 * Network slice calculations.
@@ -22,27 +22,32 @@ export default class Network extends IP {
 
     /**
     * _checkPrefix - Returns this IP prefix and validates it
-    * @return {integer} -> prefix: 25
+    * @return {integer} -> prefix: 25n
     */
     _checkPrefix (prefix) {
         if (this.version === 4) {
             if (prefix > 0 && prefix < 32) {
-                return prefix;
+                return BigInt(prefix);
             }
         } else {
             if (prefix > 0 && prefix < 128) {
-                return prefix;
+                return BigInt(prefix);
             }
         }
         throw new Error('Tips: Invalid prefix');
     }
 
     /**
-    * getMask - Returns network mask from the prefix
-    * @return {string} -> 255.0.0.0
+    * maskToInteger - Returns network mask as bigInt
+    * @return {BigInt} -> 4278190080n
     */
-    getMask () {
-        return;
+    maskToInteger () {
+        if (this.version == 4) {
+            return (IPv4MAX >> (32n - this.prefix)) << (32n - this.prefix);
+        }
+        else {
+            return (IPv6MAX >> (128n - this.prefix)) << (128n - this.prefix);
+        }
     }
 
     /**
@@ -50,7 +55,8 @@ export default class Network extends IP {
     * @return {string} -> 127.0.0.0
     */
     getNetwork () {
-        return;
+        let network = this.toInteger() & this.maskToInteger();
+        return this.toDottedNotation(network);
     }
 
     /**
