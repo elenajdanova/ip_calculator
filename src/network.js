@@ -92,7 +92,14 @@ export default class Network extends IP {
     * @return {string} ->127.0.0.1
     */
     hostFirst () {
-        return;
+        let isSmall4 = this.version === 4 && this.prefix > 30;
+        let isSmall6 = this.version === 6 && this.prefix > 126;
+        if (isSmall4 || isSmall6) {
+            return this.address;
+        } else {
+            let ip = new IP(this.networkToInteger() + 1n);
+            return ip.toCompressed();
+        }
     }
 
     /**

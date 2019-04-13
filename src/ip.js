@@ -126,11 +126,7 @@ export default class IP {
             let splitted = this.address.split(':');
             // removing longest zero group
             let [startOfLongest, longestLength] = longestZerosGroup(splitted);
-            let last = startOfLongest + longestLength;
-            if ( last === 7) {
-                longestLength++;
-                splitted.push('');
-            }
+
             splitted.splice(startOfLongest, longestLength, '');
             if (startOfLongest === 0) { splitted.unshift(''); }
 
@@ -139,7 +135,9 @@ export default class IP {
             for (let i = 0; i < splitted.length; i++) {
                 if (splitted[i] === '0000') {
                     splitted.splice(i, 1, '0');
-                    i++;
+                    if ( splitted.length - 1 !== i ) {
+                        i++;
+                    }
                 }
                 loopStr:
                 for (let j = 0; j < splitted[i].length; j++) {

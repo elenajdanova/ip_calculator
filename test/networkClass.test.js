@@ -26,6 +26,10 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     test('test getBroadcast method', () => {
         expect(net.getBroadcast()).toBe('192.168.114.255');
     });
+
+    test('test hostFirst method', () => {
+        expect(net.hostFirst()).toBe('192.168.114.1');
+    });
 });
 
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
@@ -49,5 +53,9 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
 
     test('test broadcastToLong method', () => {
         expect(net.broadcastToLong()).toBe(BigInt('338288524927338460906474233108528889855'));
+    });
+
+    test('test hostFirst method', () => {
+        expect(net.hostFirst()).toBe('fe80::1');
     });
 });
