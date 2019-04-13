@@ -63,8 +63,8 @@ export default class Network extends IP {
     * @return {string} -> 127
     */
     getNetwork () {
-        let ip = new IP(this.networkToInteger())
-        return ip.toCompressed();
+        let network = this.toDottedNotation(this.networkToInteger());
+        return this.toCompressed(network, this.version);
     }
 
     /**
@@ -97,8 +97,8 @@ export default class Network extends IP {
         if (isSmall4 || isSmall6) {
             return this.address;
         } else {
-            let ip = new IP(this.networkToInteger() + 1n);
-            return ip.toCompressed();
+            let host = this.toDottedNotation(this.networkToInteger() + 1n);
+            return this.toCompressed (host, this.version);  
         }
     }
 
