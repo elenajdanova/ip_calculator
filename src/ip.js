@@ -108,9 +108,9 @@ export default class IP {
     * IP('127.1.0.0').toCompressed
     * @return {string} -> "127.1"
     */
-    toCompressed() { //or need to make it take a param ?
-        if (this.version === 4) {
-            let splittedAddr = this.address.split('.');
+    toCompressed(addr, ver) {
+        if (ver === 4) {
+            let splittedAddr = addr.split('.');
             let sRange = [[1, 3], [2, 2], [3, 1], [0,0]];
 
             for (let i = splittedAddr.length-1; i>=0; i--) {
@@ -123,7 +123,7 @@ export default class IP {
                 }
             }
         } else {
-            let splitted = this.address.split(':');
+            let splitted = addr.split(':');
             // removing longest zero group
             let [startOfLongest, longestLength] = longestZerosGroup(splitted);
 

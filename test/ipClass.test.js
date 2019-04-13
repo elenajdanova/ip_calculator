@@ -114,7 +114,7 @@ describe('IPv4, testing toCompressed method', () => {
     ${'5.0.0.0'}        | ${'5'}
     `('returns $expected short representation of $address',({address, expected}) => {
     const ip = new IP(address);
-    expect(ip.toCompressed()).toBe(expected);
+    expect(ip.toCompressed(ip.address, ip.version)).toBe(expected);
 });
 });
 
@@ -160,7 +160,7 @@ describe('IPv4, valid, testing ALL methods', () => {
     });
 
     test('toCompressed returns short ip if possible', () => {
-        expect(ip.toCompressed()).toBe('184.170.76.186');
+        expect(ip.toCompressed(ip.address, ip.version)).toBe('184.170.76.186');
     });
 });
 
@@ -207,7 +207,7 @@ describe('IPv6, testing toCompressed method', () => {
     ${'1ace:00cd:f987:0000:0e57:0000:0006:0010'} | ${'1ace:cd:f987::e57:0:6:10'}
     `('returns $expected short representation of $address',({address, expected}) => {
     const ip = new IP(address);
-    expect(ip.toCompressed()).toBe(expected);
+    expect(ip.toCompressed(ip.address, ip.version)).toBe(expected);
 });
 });
 
@@ -291,7 +291,7 @@ describe('IPv6, valid, testing ALL methods', () => {
     });
 
     test('toCompressed returns short ip if possible', () => {
-        expect(ip.toCompressed()).toBe('FE80::202:B3FF:FE1E:8329');
+        expect(ip.toCompressed(ip.address, ip.version)).toBe('FE80::202:B3FF:FE1E:8329');
     });
 });
 
