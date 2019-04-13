@@ -19,4 +19,12 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
         expect(net.getNetwork()).toBe('192.168.114.0');
     });
 
+    test('test broadcastToLong method', () => {
+        expect(net.broadcastToLong()).toBe(BigInt('3232264959'));
+    });
+
+    test('test getBroadcast method', () => {
+        expect(net.broadcastToLong()).toBe(BigInt('3232264959'));
+    });
+
 });

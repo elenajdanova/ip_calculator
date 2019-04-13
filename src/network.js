@@ -55,7 +55,7 @@ export default class Network extends IP {
     * @return {BigInt} -> 21307064320
     */
     networkToInteger () {
-        return this.toInteger() & this.maskToInteger();    
+        return this.toInteger() & this.maskToInteger();
     }
 
     /**
@@ -67,10 +67,10 @@ export default class Network extends IP {
     }
 
     /**
-    * computeBroadcast - Calculates broadcast.IPv6 doesn't have a broadcast address, but it's used for other calculations such as Network.hostLast.
+    * getBroadcast - Calculates broadcast.IPv6 doesn't have a broadcast address, but it's used for other calculations such as Network.hostLast.
     * @return {string} -> 127.255.255.255
     */
-    computeBroadcast () {
+    getBroadcast () {
         return;
     }
 
@@ -79,7 +79,11 @@ export default class Network extends IP {
     * @return {integer} ->2147483647
     */
     broadcastToLong () {
-        return;
+        if (this.version === 4) {
+            return this.networkToInteger() | (IPv4MAX - this.maskToInteger());
+        } else {
+            return this.networkToInteger() | (IPv6MAX - this.maskToInteger());
+        }
     }
 
     /**
