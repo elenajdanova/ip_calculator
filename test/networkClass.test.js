@@ -30,6 +30,10 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     test('test hostFirst method', () => {
         expect(net.hostFirst()).toBe('192.168.114.1');
     });
+
+    test('test hostLast method', () => {
+        expect(net.hostLast()).toBe('192.168.114.254');
+    });
 });
 
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
@@ -57,5 +61,9 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
 
     test('test hostFirst method', () => {
         expect(net.hostFirst()).toBe('fe80::1');
+    });
+
+    test('test hostLast method', () => {
+        expect(net.hostLast()).toBe('fe80:0000:003f:ffff:ffff:ffff:ffff:ffff');
     });
 });

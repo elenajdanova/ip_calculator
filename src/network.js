@@ -107,7 +107,20 @@ export default class Network extends IP {
     * @return {string} ->127.255.255.255
     */
     hostLast () {
-        return;
+        let isLast4 = this.version === 4 && this.prefix === 32;
+        let isLast6 = this.version === 6 && this.prefix === 128;
+        let isPrev4 = this.version === 4 && this.prefix === 31;
+        let isPrev6 = this.version === 6 && this.prefix === 127;
+
+        if (isLast4 || isLast6) {
+            return this.address;
+        } else if (isPrev4 || isPrev6) {
+            return this.toDottedNotation(this.toInteger + 1n);
+        } else if (this.version === 4) {
+            return this.toDottedNotation(this.broadcastToLong() - 1n);
+        } else {
+            return this.toDottedNotation(this.broadcastToLong());
+        }
     }
 
     /**
