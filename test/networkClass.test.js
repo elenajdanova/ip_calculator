@@ -52,7 +52,7 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     });
 
     test('test printInfo method', () => {
-        expect(net.printInfo()).toBeTruthy();
+        expect(net.printInfo()).toEqual('Private-Use');
     });
 });
 
@@ -95,8 +95,15 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
         expect(net.networkSize()).toBe(BigInt('77371252455336267181195264'));
     });
 
-    test('test contains method', () => {
+    test('test contains method true', () => {
         expect(net.contains(net.address, 'fe80:0000:003f::cafe:00a5', 42)).toBeTruthy();
     });
 
+    test('test contains method false', () => {
+        expect(net.contains(net.address, '::beff:acff:dff5', 120)).toBeFalsy();
+    });
+
+    test('test printInfo method', () => {
+        expect(net.printInfo()).toEqual('Link-Local Unicast');
+    });
 });
