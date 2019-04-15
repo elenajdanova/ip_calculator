@@ -124,13 +124,17 @@ export default class Network extends IP {
     }
 
     /**
-    * contains - Check if the given otherIP is part of the network
-    * @param {IP} thisIP
-    * @param {Network} otherIP
+    * contains - Check if thisIP is part of the network
+    * @param {string} thisIP
+    * @param {string} otherIP
+    * @param {number} prefix
     * @return {boolean}
     */
-    contains (thisIP, otherIP) {
-        return;
+    contains (thisIP, otherIP, prefix) {
+        let other = new Network(otherIP, prefix);
+        let smaller = this.networkToInteger() <= other.networkToInteger() <= this.broadcastToLong();
+        let bigger = other.networkToInteger() <= this.networkToInteger() <= other.broadcastToLong();
+        return  smaller || bigger;
     }
 
     /**
@@ -152,6 +156,6 @@ export default class Network extends IP {
         let marks = {4: 32n, 6: 128n};
         let size = 2n ** (marks[this.version] - this.prefix);
         return (this.version === 4) ? size - 2n : size;
-
     }
+
 } // end Network class
