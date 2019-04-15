@@ -22,14 +22,6 @@ export default class IP {
     // Public methods
 
     /**
-    * printInfo - Shows IANA allocation information for the current IP address.
-    * @return {string} ->LOOPBACK
-    */
-    printInfo () {
-        return;
-    }
-
-    /**
     * toInteger - Converts dotquad or hextet IP to integer
     * @return {BigInt} -> 2130706432
     */

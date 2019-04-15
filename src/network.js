@@ -1,6 +1,40 @@
 import IP from './ip.js';
 import { IPv4MAX, IPv6MAX } from '../index.js';
 
+
+//IP range specific information, see IANA allocations.
+// http://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml
+let _ipv4Registry = new Map([
+   ['0.0.0.0', [8, 'This host on this network']],
+   ['10.0.0.0', [8, 'Private-Use']],
+   ['100.64.0.0', [10, 'Shared Address Space']],
+   ['127.0.0.0', [8, 'Loopback']],
+   ['169.254.0.0', [16, 'Link Local']],
+   ['172.16.0.0', [12, 'Private-Use']],
+   ['192.0.0.0', [24, 'IETF Protocol Assignments']],
+   ['192.0.0.0', [29, 'IPv4 Service Continuity Prefix']],
+   ['192.0.0.8', [32, 'IPv4 dummy address']],
+   ['192.0.0.9', [32, 'Port Control Protocol Anycast']],
+   ['192.0.0.10', [32, 'Traversal Using Relays around NAT Anycast']],
+   ['192.0.0.170', [32, 'NAT64/DNS64 Discovery']],
+   ['192.0.0.171', [32, 'NAT64/DNS64 Discovery']],
+   ['192.0.2.0', [24, 'Documentation (TEST-NET-1)']],
+   ['192.31.196.0', [24, 'AS112-v4']],
+   ['192.52.193.0', [24, 'AMT']],
+   ['192.88.99.0', [24, 'Deprecated (6to4 Relay Anycast)']],
+   ['192.168.0.0', [16, 'Private-Use']],
+   ['192.175.48.0', [24, 'Direct Delegation AS112 Service']],
+   ['198.18.0.0', [15, 'Benchmarking']],
+   ['198.51.100.0', [24, 'Documentation (TEST-NET-2)']],
+   ['203.0.113.0', [24, 'Documentation (TEST-NET-3)']],
+   ['240.0.0.0', [4, 'Reserved']],
+   ['255.255.255.255', [32, 'Limited Broadcast']]
+  ]);
+
+let _ipv6Registry = new Map([
+    ['255.255.255.255', [32, 'Limited Broadcast']]
+]);
+
 /**
 * Network slice calculations.
 * @class Network
@@ -20,8 +54,11 @@ export default class Network extends IP {
         this.prefix = this._checkPrefix(prefix);
     }
 
+    // Private methods
+
     /**
     * _checkPrefix - Returns this IP prefix and validates it
+    * @private
     * @return {integer} -> prefix: 25n
     */
     _checkPrefix (prefix) {
@@ -35,6 +72,20 @@ export default class Network extends IP {
             }
         }
         throw new Error('Tips: Invalid prefix');
+    }
+
+      // Public methods
+
+    /**
+    * printInfo - Shows IANA allocation information for the current IP address.
+    * @return {string} ->LOOPBACK
+    */
+    printInfo () {
+      let registry = {4: _ipv4Registry, 6: _ipv6Registry}
+      for (let [addr, info] of registry[this.version].entries()) {
+          let result = this.contains(this.address, addr, info[0]);
+          console.log(result);
+      }
     }
 
     /**
@@ -132,8 +183,12 @@ export default class Network extends IP {
     */
     contains (thisIP, otherIP, prefix) {
         let other = new Network(otherIP, prefix);
-        let smaller = this.networkToInteger() <= other.networkToInteger() <= this.broadcastToLong();
-        let bigger = other.networkToInteger() <= this.networkToInteger() <= other.broadcastToLong();
+        let thisNetwork = this.networkToInteger();
+        let otherNetwork = other.networkToInteger();
+        let smaller = (thisNetwork <= otherNetwork) &&
+            (otherNetwork <= this.broadcastToLong());
+        let bigger = (otherNetwork <= thisNetwork) &&
+            (thisNetwork <= other.broadcastToLong());
         return  smaller || bigger;
     }
 
