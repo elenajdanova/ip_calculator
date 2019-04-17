@@ -56,7 +56,7 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     });
 });
 
-describe('IPv4, valid, test _checkPrefix method', () => {
+describe('Valid, test _checkPrefix method', () => {
     test.each`
     address                                      | prefix  | expected
     ${'192.168.98.2'}                            | ${1}    | ${{'address': '192.168.98.2', 'integer': 0, 'prefix': BigInt('1'), 'short': 0, 'version': 4}}
@@ -73,13 +73,13 @@ describe('IPv4, valid, test _checkPrefix method', () => {
 });
 });
 
-describe('IPv4, INvalid, test _checkPrefix method', () => {
+describe('INvalid, test _checkPrefix method', () => {
     test.each`
     address                                       | prefix
     ${'192.168.98.2'}                             | ${0}
     ${'192.168.0.1'}                              | ${52}
     ${'255.168.114.128'}                          | ${-7}
-    ${'10.'}                                      | ${183}
+    ${'10.'}                                      | ${103}
     ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${203}
     ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${0}
     `('returns $expected validation for $prefix',({address, prefix}) => {
