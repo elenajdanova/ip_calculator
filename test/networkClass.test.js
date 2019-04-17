@@ -56,6 +56,41 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     });
 });
 
+describe('IPv4, valid, test _checkPrefix method', () => {
+    test.each`
+    address                                      | prefix  | expected
+    ${'192.168.98.2'}                            | ${1}    | ${{'address': '192.168.98.2', 'integer': 0, 'prefix': BigInt('1'), 'short': 0, 'version': 4}}
+    ${'255.168.114.128'}                         | ${32}   | ${{'address': '255.168.114.128', 'integer': 0, 'prefix': BigInt('32'), 'short': 0, 'version': 4}}
+    ${'10.'}                                     | ${18}   | ${{'address': '10.0.0.0', 'integer': 0, 'prefix': BigInt('18'), 'short': '10.', 'version': 4}}
+    ${BigInt('1707620608')}                      | ${9}   | ${{'address': '101.200.57.0', 'integer': BigInt('1707620608'), 'prefix': BigInt('9'), 'short': 0, 'version': 4}}
+    ${'2001:dead:beef:0051:c01d:c01a:abcd:0987'} | ${3}    | ${{'address': '2001:dead:beef:0051:c01d:c01a:abcd:0987', 'integer': 0, 'prefix': BigInt('3'), 'short': 0, 'version': 6}}
+    ${'2002:babe::47b3:0:2:3'}                   | ${128}    | ${{'address': '2002:babe:0000:0000:47b3:0000:0002:0003', 'integer': 0, 'prefix': BigInt('128'), 'short': '2002:babe::47b3:0:2:3', 'version': 6}}
+    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'} | ${24}    | ${{'address': '7201:dead:beef:4ac1:c01e:c01f:ffff:0fab', 'integer': 0, 'prefix': BigInt('24'), 'short': 0, 'version': 6}}
+
+    `('returns $expected validation for $prefix',({address, prefix, expected}) => {
+    const net = new Network(address, prefix);
+    expect(net).toEqual(expected);
+});
+});
+
+describe('IPv4, INvalid, test _checkPrefix method', () => {
+    test.each`
+    address                                       | prefix
+    ${'192.168.98.2'}                             | ${0}
+    ${'192.168.0.1'}                              | ${52}
+    ${'255.168.114.128'}                          | ${-7}
+    ${'10.'}                                      | ${183}
+    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${203}
+    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${0}
+    `('returns $expected validation for $prefix',({address, prefix}) => {
+    function prefixError() {
+        const net = new Network(address, prefix);
+        net;
+    }
+    expect(prefixError).toThrowError('Tips');
+});
+});
+
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
     const net = new Network('FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 42);
 
