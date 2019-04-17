@@ -4,7 +4,7 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     const net = new Network('192.168.114.42', 24);
 
     test('test _checkPrefix method', () => {
-        expect(net).toEqual({"address": "192.168.114.42", "integer": 0, "prefix": BigInt('24'), "short": 0, "version": 4});
+        expect(net).toEqual({'address': '192.168.114.42', 'integer': 0, 'prefix': BigInt('24'), 'short': 0, 'version': 4});
     });
 
     test('test maskToInteger method', () => {
@@ -91,11 +91,26 @@ describe('INvalid, test _checkPrefix method', () => {
 });
 });
 
+// //doesn't work with bigint
+// describe('Valid, test maskToInteger method', () => {
+//     test.each`
+//     address                           | prefix  | expected
+//     ${'192.168.98.2'}                 | ${6}    | ${BigInt('4227858432')}
+//     ${'255.168.114.128'}              | ${17}   | ${BigInt('4294934528')}
+//     ${'2001:dead:beef:0051::0987'}    | ${99}   | ${BigInt('42545004622471055030244605799126007808')}
+//     ${'2002:babe::47b3:0:2:3'}        | ${70}   | ${BigInt('42549468040371534514001800278298329088')}
+//
+//     `('returns $expected int for $prefix',({address, prefix, expected}) => {
+//     const net = new Network(address, prefix);
+//     expect(net.maskToInteger()).toBe(expected);
+// });
+// });
+
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
     const net = new Network('FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 42);
 
     test('test _checkPrefix method', () => {
-        expect(net).toEqual({"address": "FE80:0000:0000:0000:0202:B3FF:FE1E:8329", "integer": 0, "prefix": BigInt('42'), "short": 0, "version": 6});
+        expect(net).toEqual({'address': 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 'integer': 0, 'prefix': BigInt('42'), 'short': 0, 'version': 6});
     });
 
     test('test maskToInteger method', () => {
