@@ -156,6 +156,32 @@ describe('Valid, testing getNetwork method', () => {
 });
 });
 
+describe('Valid, test broadcastToLong method', () => {
+    const addr = ['192.168.98.2', '255.168.114.128', '1:dead::987', '2:be::b3:0:2:3'];
+    const prefix = [6, 17, 99, 70];
+    const expected = [ BigInt('3288334335'), BigInt('4289232895'), BigInt('9708698262660466193050469754994687'), BigInt('10399647067947365769434142160715775')];
+
+    test(`returns ${expected[0]} integer for ${addr[0]}`, () => {
+        const net = new Network(addr[0], prefix[0]);
+        expect(net.broadcastToLong()).toBe(expected[0]);
+    });
+
+    test(`returns ${expected[1]} integer for ${addr[1]}`, () => {
+        const net = new Network(addr[1], prefix[1]);
+        expect(net.broadcastToLong()).toBe(expected[1]);
+    });
+
+    test(`returns ${expected[2]} integer for ${addr[2]}`, () => {
+        const net = new Network(addr[2], prefix[2]);
+        expect(net.broadcastToLong()).toBe(expected[2]);
+    });
+
+    test(`returns ${expected[3]} integer for ${addr[3]}`, () => {
+        const net = new Network(addr[3], prefix[3]);
+        expect(net.broadcastToLong()).toBe(expected[3]);
+    });
+});
+
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
     const net = new Network('FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 42);
 
