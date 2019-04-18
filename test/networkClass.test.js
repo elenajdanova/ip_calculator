@@ -195,6 +195,19 @@ describe('Valid, testing getBroadcast method', () => {
 });
 });
 
+describe('Valid, testing hostFirst method', () => {
+    test.each`
+    address              |prefix   | expected
+    ${'192.168.98.2'}    | ${6}    | ${'192.0.0.1'}
+    ${'255.168.114.128'} | ${17}   | ${'255.168.0.1'}
+    ${'1:dead::987'}     | ${99}   | ${'1:dead::1'}
+    ${'2:be::b3:0:2:3'}  | ${70}   | ${'2:be::1'}
+    `('returns $expected network for ip $address',({address, prefix, expected}) => {
+    const net = new Network(address, prefix);
+    expect(net.hostFirst()).toBe(expected);
+});
+});
+
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
     const net = new Network('FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 42);
 
