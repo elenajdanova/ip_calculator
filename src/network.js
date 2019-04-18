@@ -143,11 +143,13 @@ export default class Network extends IP {
     }
 
     /**
-    * getBroadcast - Calculates broadcast.IPv6 doesn't have a broadcast address, but it's used for other calculations such as Network.hostLast.
+    * getBroadcast - Calculates broadcast.IPv6 doesn't have a broadcast
+    * address, but it's used for other calculations such as Network.hostLast.
     * @return {string} -> 127.255.255.255
     */
     getBroadcast () {
-        return this.version === 4 ? this.toDottedNotation(this.broadcastToLong()) :
+        return this.version === 4 ?
+        this.toDottedNotation(this.broadcastToLong()) :
         'IPv6 doesnt have broadcast address';
     }
 
