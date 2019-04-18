@@ -189,7 +189,7 @@ describe('Valid, testing getBroadcast method', () => {
     ${'255.168.114.128'} | ${17}   | ${'255.168.127.255'}
     ${'10.0.0.1'}        | ${28}   | ${'10.0.0.15'}
     ${'2:be::b3:0:2:3'}  | ${70}   | ${'IPv6 doesnt have broadcast address'}
-    `('returns $expected network for ip $address',({address, prefix, expected}) => {
+    `('returns $expected broadcast for ip $address',({address, prefix, expected}) => {
     const net = new Network(address, prefix);
     expect(net.getBroadcast()).toBe(expected);
 });
@@ -202,9 +202,22 @@ describe('Valid, testing hostFirst method', () => {
     ${'255.168.114.128'} | ${17}   | ${'255.168.0.1'}
     ${'1:dead::987'}     | ${99}   | ${'1:dead::1'}
     ${'2:be::b3:0:2:3'}  | ${70}   | ${'2:be::1'}
-    `('returns $expected network for ip $address',({address, prefix, expected}) => {
+    `('returns $expected first host for ip $address',({address, prefix, expected}) => {
     const net = new Network(address, prefix);
     expect(net.hostFirst()).toBe(expected);
+});
+});
+
+describe('Valid, testing hostLast method', () => {
+    test.each`
+    address              |prefix   | expected
+    ${'192.168.98.2'}    | ${6}    | ${'195.255.255.254'}
+    ${'255.168.114.128'} | ${17}   | ${'255.168.127.254'}
+    ${'1:dead::987'}     | ${99}   | ${'0001:dead:0000:0000:0000:0000:1fff:ffff'}
+    ${'2:be::b3:0:2:3'}  | ${70}   | ${'0002:00be:0000:0000:03ff:ffff:ffff:ffff'}
+    `('returns $expected last host for ip $address',({address, prefix, expected}) => {
+    const net = new Network(address, prefix);
+    expect(net.hostLast()).toBe(expected);
 });
 });
 
