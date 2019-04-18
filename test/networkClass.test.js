@@ -182,6 +182,19 @@ describe('Valid, test broadcastToLong method', () => {
     });
 });
 
+describe('Valid, testing getBroadcast method', () => {
+    test.each`
+    address              |prefix   | expected
+    ${'192.168.98.2'}    | ${6}    | ${'195.255.255.255'}
+    ${'255.168.114.128'} | ${17}   | ${'255.168.127.255'}
+    ${'10.0.0.1'}        | ${28}   | ${'10.0.0.15'}
+    ${'2:be::b3:0:2:3'}  | ${70}   | ${'IPv6 doesnt have broadcast address'}
+    `('returns $expected network for ip $address',({address, prefix, expected}) => {
+    const net = new Network(address, prefix);
+    expect(net.getBroadcast()).toBe(expected);
+});
+});
+
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
     const net = new Network('FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 42);
 

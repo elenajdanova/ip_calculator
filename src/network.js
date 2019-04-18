@@ -147,7 +147,8 @@ export default class Network extends IP {
     * @return {string} -> 127.255.255.255
     */
     getBroadcast () {
-        return this.toDottedNotation(this.broadcastToLong());
+        return this.version === 4 ? this.toDottedNotation(this.broadcastToLong()) :
+        'IPv6 doesnt have broadcast address';
     }
 
     /**
