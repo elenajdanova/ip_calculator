@@ -1,4 +1,5 @@
-import { IPv4MAX, IPv6MAX } from '../index.js';
+const IPv4MAX = (2n ** 32n) - 1n;
+const IPv6MAX = (2n ** 128n) - 1n;
 
 /**
 * Represents a single IP address v4 or v6.
@@ -361,7 +362,3 @@ const longestZerosGroup = (splittedAddr) => {
     }
     return [startOfLongest, currentLongest];
 };
-
-
-// console.log( ip = new IP('2002:babe::abc:2:3') );
-// console.log(ip.toInteger());

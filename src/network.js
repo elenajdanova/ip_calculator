@@ -1,6 +1,7 @@
 import IP from './ip.js';
-import { IPv4MAX, IPv6MAX } from '../index.js';
 
+const IPv4MAX = (2n ** 32n) - 1n;
+const IPv6MAX = (2n ** 128n) - 1n;
 
 //IP range specific information, see IANA allocations.
 // http://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml
@@ -242,4 +243,4 @@ export default class Network extends IP {
         return (this.version === 4) ? size - 2n : size;
     }
 
-} // end Network class
+} 
