@@ -249,6 +249,20 @@ describe('Valid, testing contains method to be true', () => {
 });
 });
 
+describe('INvalid, testing contains method to be false', () => {
+    test.each`
+    thisAddr             | otherAddr                      | prefix
+    ${'192.168.98.2'}    | ${'205.100.5.4'}               | ${7}
+    ${'255.168.114.128'} | ${'255.168.11.131'}            | ${29}
+    ${'1:dead::987'}     | ${'2001:dead::a123:cfff:dfff'} | ${64}
+    ${'2:be::b3:0:2:3'}  | ${'3002:be:001e:0:00b3::5f'}   | ${101}
+    `('returns $thisAddr is inside of network $otherAddr/$prefix',({thisAddr,
+    otherAddr, prefix}) => {
+    const net = new Network(thisAddr, prefix);
+    expect(net.contains(net.address, otherAddr, prefix)).toBeFalsy();
+});
+});
+
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
     const net = new Network('FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 42);
 
