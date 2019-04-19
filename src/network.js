@@ -22,7 +22,7 @@ let _ipv4Registry = new Map([
     ['192.31.196.0', [24, 'AS112-v4']],
     ['192.52.193.0', [24, 'AMT']],
     ['192.88.99.0', [24, 'Deprecated (6to4 Relay Anycast)']],
-    ['192.168.0.0', [16, 'Private-Use']],
+    ['192.168.0.0', [16, 'Private Use']],
     ['192.175.48.0', [24, 'Direct Delegation AS112 Service']],
     ['198.18.0.0', [15, 'Benchmarking']],
     ['198.51.100.0', [24, 'Documentation (TEST-NET-2)']],
@@ -33,7 +33,6 @@ let _ipv4Registry = new Map([
 
 //https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml
 let _ipv6Registry = new Map([
-    ['255.255.255.255', [32, 'Limited Broadcast']],
     ['::1', [128, 'Loopback Address']],
     ['::', [128, 'Unspecified Address']],
     ['::', [128, 'Unspecified Address']],
@@ -104,12 +103,15 @@ export default class Network extends IP {
     * @return {string} ->LOOPBACK
     */
     printInfo () {
-      let registry = {4: _ipv4Registry, 6: _ipv6Registry}
+      let registry = {4: _ipv4Registry, 6: _ipv6Registry};
+      let results = [];
       for (let [addr, info] of registry[this.version].entries()) {
           let found = this.contains(this.address, addr, info[0]);
-          if (found) { return info[1]; }
+          if (found) {
+              results.unshift(info[1]);
+          }
       }
-      return 'UNKNOWN';
+      return results.length === 0 ? 'UNKNOWN' : results[0];
     }
 
     /**

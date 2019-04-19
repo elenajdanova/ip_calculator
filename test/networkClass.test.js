@@ -52,8 +52,21 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     });
 
     test('test printInfo method', () => {
-        expect(net.printInfo()).toEqual('Private-Use');
+        expect(net.printInfo()).toEqual('Private Use');
     });
+});
+
+describe('Valid, testing printInfo method', () => {
+    test.each`
+    address              |prefix   | expected
+    ${'192.168.98.2'}    | ${15}   | ${'Private Use'}
+    ${'255.168.114.128'} | ${17}   | ${'Reserved'}
+    ${'1:dead::987'}     | ${99}   | ${'UNKNOWN'}
+    ${'2:be::b3:0:2:3'}  | ${70}   | ${'UNKNOWN'}
+    `('returns $expected network for ip $address',({address, prefix, expected}) => {
+    const net = new Network(address, prefix);
+    expect(net.printInfo()).toEqual(expected);
+});
 });
 
 describe('Valid, test _checkPrefix method', () => {
@@ -252,7 +265,7 @@ describe('Valid, testing contains method to be true', () => {
 describe('Valid, testing contains method to be false', () => {
     test.each`
     thisAddr             | otherAddr                      | prefix
-    ${'192.168.98.2'}    | ${'205.100.5.4'}               | ${7}
+    ${'192.168.98.2'}    | ${'192.175.48.0'}              | ${24}
     ${'255.168.114.128'} | ${'255.168.11.131'}            | ${29}
     ${'1:dead::987'}     | ${'2001:dead::a123:cfff:dfff'} | ${64}
     ${'2:be::b3:0:2:3'}  | ${'3002:be:001e:0:00b3::5f'}   | ${101}
