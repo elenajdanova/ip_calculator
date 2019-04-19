@@ -249,7 +249,7 @@ describe('Valid, testing contains method to be true', () => {
 });
 });
 
-describe('INvalid, testing contains method to be false', () => {
+describe('Valid, testing contains method to be false', () => {
     test.each`
     thisAddr             | otherAddr                      | prefix
     ${'192.168.98.2'}    | ${'205.100.5.4'}               | ${7}
@@ -261,6 +261,34 @@ describe('INvalid, testing contains method to be false', () => {
     const net = new Network(thisAddr, prefix);
     expect(net.contains(net.address, otherAddr, prefix)).toBeFalsy();
 });
+});
+
+describe('Valid, test networkSize method', () => {
+    const addr = ['192.168.98.2', '255.168.114.128', '1:dead::987',
+        '2:be::b3:0:2:3'];
+    const prefix = [6, 17, 99, 70];
+    const expected = [ BigInt('67108862'), BigInt('32766'),
+        BigInt('536870912'), BigInt('288230376151711744')];
+
+    test(`returns ${expected[0]} nr of hosts for ${addr[0]}`, () => {
+        const net = new Network(addr[0], prefix[0]);
+        expect(net.networkSize()).toBe(expected[0]);
+    });
+
+    test(`returns ${expected[1]} nr of hosts for ${addr[1]}`, () => {
+        const net = new Network(addr[1], prefix[1]);
+        expect(net.networkSize()).toBe(expected[1]);
+    });
+
+    test(`returns ${expected[2]} nr of hosts for ${addr[2]}`, () => {
+        const net = new Network(addr[2], prefix[2]);
+        expect(net.networkSize()).toBe(expected[2]);
+    });
+
+    test(`returns ${expected[3]} nr of hosts for ${addr[3]}`, () => {
+        const net = new Network(addr[3], prefix[3]);
+        expect(net.networkSize()).toBe(expected[3]);
+    });
 });
 
 describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8329', () => {
