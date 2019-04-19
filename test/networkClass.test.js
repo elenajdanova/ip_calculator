@@ -94,7 +94,7 @@ describe('INvalid, test _checkPrefix method', () => {
     ${'255.168.114.128'}                          | ${-7}
     ${'10.'}                                      | ${103}
     ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${203}
-    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${0}
+    ${'7201:dead:beef:4ac1:c01e:c01f:ffff:0fab'}  | ${undefined}
     `('returns $expected validation for $prefix',({address, prefix}) => {
     function prefixError() {
         const net = new Network(address, prefix);
