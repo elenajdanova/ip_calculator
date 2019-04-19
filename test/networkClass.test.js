@@ -223,14 +223,29 @@ describe('Valid, testing hostLast method', () => {
 
 describe('Valid, testing hostRange method', () => {
     test.each`
-    address              |prefix   | expected
+    address              | prefix   | expected
     ${'192.168.98.2'}    | ${6}    | ${['192.0.0.1', '195.255.255.254']}
     ${'255.168.114.128'} | ${17}   | ${['255.168.0.1', '255.168.127.254']}
     ${'1:dead::987'}     | ${99}   | ${['1:dead::1', '0001:dead:0000:0000:0000:0000:1fff:ffff']}
     ${'2:be::b3:0:2:3'}  | ${70}   | ${['2:be::1', '0002:00be:0000:0000:03ff:ffff:ffff:ffff']}
-    `('returns $expected host range for ip $address',({address, prefix, expected}) => {
+    `('returns $expected host range for ip $address',({address, prefix,
+    expected}) => {
     const net = new Network(address, prefix);
     expect(net.hostRange()).toEqual(expected);
+});
+});
+
+describe('Valid, testing contains method to be true', () => {
+    test.each`
+    thisAddr             | otherAddr                                    | prefix
+    ${'192.168.98.2'}    | ${'193.100.5.4'}                             | ${7}
+    ${'255.168.114.128'} | ${'255.168.114.131'}                         | ${29}
+    ${'1:dead::987'}     | ${'0001:dead:0000:0000:0000:a123:ffff:ffff'} | ${64}
+    ${'2:be::b3:0:2:3'}  | ${'0002:00be:0000:0000:00b3:0000:0000:005f'} | ${101}
+    `('returns $thisAddr is inside of network $otherAddr/$prefix',({thisAddr,
+    otherAddr, prefix}) => {
+    const net = new Network(thisAddr, prefix);
+    expect(net.contains(net.address, otherAddr, prefix)).toBeTruthy();
 });
 });
 
@@ -238,15 +253,19 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
     const net = new Network('FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 42);
 
     test('test _checkPrefix method', () => {
-        expect(net).toEqual({'address': 'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 'integer': 0, 'prefix': BigInt('42'), 'short': 0, 'version': 6});
+        expect(net).toEqual({'address':
+        'FE80:0000:0000:0000:0202:B3FF:FE1E:8329', 'integer': 0,
+        'prefix': BigInt('42'), 'short': 0, 'version': 6});
     });
 
     test('test maskToInteger method', () => {
-        expect(net.maskToInteger()).toBe(BigInt('340282366920861092210919271164587016192'));
+        expect(net.maskToInteger()).toBe(
+            BigInt('340282366920861092210919271164587016192'));
     });
 
     test('test networkToInteger method', () => {
-        expect(net.networkToInteger()).toBe(BigInt('338288524927261089654018896841347694592'));
+        expect(net.networkToInteger()).toBe(
+            BigInt('338288524927261089654018896841347694592'));
     });
 
     test('test getNetwork method', () => {
@@ -254,7 +273,8 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
     });
 
     test('test broadcastToLong method', () => {
-        expect(net.broadcastToLong()).toBe(BigInt('338288524927338460906474233108528889855'));
+        expect(net.broadcastToLong()).toBe(
+            BigInt('338288524927338460906474233108528889855'));
     });
 
     test('test hostFirst method', () => {
@@ -266,7 +286,8 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
     });
 
     test('test hostRange method', () => {
-        expect(net.hostRange()).toEqual(['fe80::1', 'fe80:0000:003f:ffff:ffff:ffff:ffff:ffff']);
+        expect(net.hostRange()).toEqual(['fe80::1',
+            'fe80:0000:003f:ffff:ffff:ffff:ffff:ffff']);
     });
 
     test('test networkSize method', () => {
@@ -274,7 +295,8 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
     });
 
     test('test contains method true', () => {
-        expect(net.contains(net.address, 'fe80:0000:003f::cafe:00a5', 42)).toBeTruthy();
+        expect(net.contains(net.address, 'fe80:0000:003f::cafe:00a5',
+            42)).toBeTruthy();
     });
 
     test('test contains method false', () => {
