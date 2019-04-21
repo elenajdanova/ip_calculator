@@ -141,8 +141,7 @@ export default class Network extends IP {
     * @return {string} -> 127
     */
     getNetwork () {
-        let network = this.toDottedNotation(this.networkToInteger());
-        return this.toCompressed(network, this.version);
+        return this.toDottedNotation(this.networkToInteger());
     }
 
     /**
@@ -243,4 +242,4 @@ export default class Network extends IP {
         return (this.version === 4) ? size - 2n : size;
     }
 
-} 
+}
