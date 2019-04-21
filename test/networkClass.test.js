@@ -16,7 +16,7 @@ describe('IPv4 test ALL network methods for 192.168.114.42', () => {
     });
 
     test('test getNetwork method', () => {
-        expect(net.getNetwork()).toBe('192.168.114');
+        expect(net.getNetwork()).toBe('192.168.114.0');
     });
 
     test('test broadcastToLong method', () => {
@@ -159,10 +159,10 @@ describe('Valid, test networkToInteger method', () => {
 describe('Valid, testing getNetwork method', () => {
     test.each`
     address              |prefix   | expected
-    ${'192.168.98.2'}    | ${6}    | ${'192'}
-    ${'255.168.114.128'} | ${17}   | ${'255.168'}
-    ${'1:dead::987'}     | ${99}   | ${'1:dead::'}
-    ${'2:be::b3:0:2:3'}  | ${70}   | ${'2:be::'}
+    ${'192.168.98.2'}    | ${6}    | ${'192.0.0.0'}
+    ${'255.168.114.128'} | ${17}   | ${'255.168.0.0'}
+    ${'1:dead::987'}     | ${99}   | ${'0001:dead:0000:0000:0000:0000:0000:0000'}
+    ${'2:be::b3:0:2:3'}  | ${70}   | ${'0002:00be:0000:0000:0000:0000:0000:0000'}
     `('returns $expected network for ip $address',({address, prefix, expected}) => {
     const net = new Network(address, prefix);
     expect(net.getNetwork()).toBe(expected);
@@ -324,7 +324,7 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
     });
 
     test('test getNetwork method', () => {
-        expect(net.getNetwork()).toBe('fe80::');
+        expect(net.getNetwork()).toBe('fe80:0000:0000:0000:0000:0000:0000:0000');
     });
 
     test('test broadcastToLong method', () => {
