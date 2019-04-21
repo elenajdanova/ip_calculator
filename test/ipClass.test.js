@@ -297,7 +297,7 @@ describe('IPv6, valid, testing ALL methods', () => {
 
 describe('IPv4, valid integer, testing validation methods', () => {
     const expected = ['101.200.57.0', '255.255.0.0', '0.0.0.192', '0.1.116.233'];
-    const addr = [ BigInt('1707620608'), BigInt('4294901760'), BigInt('192'), BigInt('95465')];
+    const addr = [1707620608 , BigInt('4294901760'), BigInt('192'), 95465];
 
     test(`returns ${expected[0]} for ${addr[0]}`, () => {
         const ip = new IP(addr[0]);

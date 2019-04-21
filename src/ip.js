@@ -158,16 +158,17 @@ export default class IP {
     */
     _checkVersion (addr) {
         //matches all possible chars in both versions of IP
-        const reGen = /^[0-9a-fn.:]+$/i;
+        const reGen = /^[0-9a-f.:]+$/i;
         if ( reGen.test(addr) ) {
             //checks if there is .. and more or whole IP is just a dot
             const reDots = /\.{2,}|^\.{1}$/;
             //checks if there is ::: and more or whole IP is just a colon
             const reColon = /:{3,}|^:{1}$/;
-            //checks if there is only digits and n in bigInt IP
-            const reNum = /^[0-9n]+$/;
+            //checks if there is only digits in integer IP
+            const reNum = /^[0-9]+$/;
 
             if ( reNum.test(addr) ) {
+                addr = BigInt(addr);
                 if (addr > IPv6MAX || addr <= 0) {
                     throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
                 } else if (addr <= IPv4MAX) {
@@ -191,8 +192,8 @@ export default class IP {
     _checkAddress (addr, v) {
         const reNum = /^[0-9]+$/;
         if ( reNum.test(addr) ) {
-            this.integer = addr;
-            return this.toDottedNotation(addr);
+            this.integer = BigInt(addr);
+            return this.toDottedNotation(this.integer);
         }
 
         const marks = {
@@ -351,7 +352,7 @@ const longestZerosGroup = (splittedAddr) => {
     while (current < splittedAddr.length - 2) {
         let startOfRun = current;
         while (current < splittedAddr.length - 1 &&
-              splittedAddr[current] === '0000') {
+            splittedAddr[current] === '0000') {
             current++;
         }
         if (current - startOfRun > currentLongest) {
