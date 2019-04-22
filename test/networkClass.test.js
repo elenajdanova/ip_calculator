@@ -210,11 +210,11 @@ describe('Valid, testing getBroadcast method', () => {
 
 describe('Valid, testing hostFirst method', () => {
     test.each`
-    address              |prefix   | expected
-    ${'192.168.98.2'}    | ${6}    | ${'192.0.0.1'}
-    ${'255.168.114.128'} | ${17}   | ${'255.168.0.1'}
-    ${'1:dead::987'}     | ${99}   | ${'1:dead::1'}
-    ${'2:be::b3:0:2:3'}  | ${70}   | ${'2:be::1'}
+    address              |prefix    | expected
+    ${'192.168.98.2'}    | ${31}    | ${'N/A'}
+    ${'255.168.114.128'} | ${17}    | ${'255.168.0.1'}
+    ${'1:dead::987'}     | ${127}   | ${'1:dead::986'}
+    ${'2:be::b3:0:2:3'}  | ${70}     | ${'2:be::'}
     `('returns $expected first host for ip $address',({address, prefix, expected}) => {
     const net = new Network(address, prefix);
     expect(net.hostFirst()).toBe(expected);
@@ -225,12 +225,13 @@ describe('Valid, testing hostLast method', () => {
     test.each`
     address              |prefix   | expected
     ${'192.168.98.2'}    | ${6}    | ${'195.255.255.254'}
-    ${'255.168.114.128'} | ${17}   | ${'255.168.127.254'}
-    ${'1:dead::987'}     | ${99}   | ${'0001:dead:0000:0000:0000:0000:1fff:ffff'}
-    ${'2:be::b3:0:2:3'}  | ${70}   | ${'0002:00be:0000:0000:03ff:ffff:ffff:ffff'}
+    ${'255.168.114.128'} | ${31}   | ${'N/A'}
+    ${'127.200.65.0'}    | ${32}   | ${'N/A'}
+    ${'1:dead::987'}     | ${127}   | ${'1:dead::987'}
+    ${'2:be::b3:0:2:3'}  | ${128}   | ${'N/A'}
     `('returns $expected last host for ip $address',({address, prefix, expected}) => {
     const net = new Network(address, prefix);
-    expect(net.hostLast()).toBe(expected);
+    expect(net.hostLast()).toEqual(expected);
 });
 });
 
@@ -239,8 +240,8 @@ describe('Valid, testing hostRange method', () => {
     address              | prefix   | expected
     ${'192.168.98.2'}    | ${6}    | ${['192.0.0.1', '195.255.255.254']}
     ${'255.168.114.128'} | ${17}   | ${['255.168.0.1', '255.168.127.254']}
-    ${'1:dead::987'}     | ${99}   | ${['1:dead::1', '0001:dead:0000:0000:0000:0000:1fff:ffff']}
-    ${'2:be::b3:0:2:3'}  | ${70}   | ${['2:be::1', '0002:00be:0000:0000:03ff:ffff:ffff:ffff']}
+    ${'1:dead::987'}     | ${99}   | ${['1:dead::', '1:dead::1fff:ffff']}
+    ${'2:be::b3:0:2:3'}  | ${70}   | ${['2:be::', '2:be::3ff:ffff:ffff:ffff']}
     `('returns $expected host range for ip $address',({address, prefix,
     expected}) => {
     const net = new Network(address, prefix);
@@ -333,16 +334,16 @@ describe('IPv6 test ALL network methods for FE80:0000:0000:0000:0202:B3FF:FE1E:8
     });
 
     test('test hostFirst method', () => {
-        expect(net.hostFirst()).toBe('fe80::1');
+        expect(net.hostFirst()).toBe('fe80::');
     });
 
     test('test hostLast method', () => {
-        expect(net.hostLast()).toBe('fe80:0000:003f:ffff:ffff:ffff:ffff:ffff');
+        expect(net.hostLast()).toBe('fe80::3f:ffff:ffff:ffff:ffff:ffff');
     });
 
     test('test hostRange method', () => {
-        expect(net.hostRange()).toEqual(['fe80::1',
-            'fe80:0000:003f:ffff:ffff:ffff:ffff:ffff']);
+        expect(net.hostRange()).toEqual(['fe80::',
+            'fe80::3f:ffff:ffff:ffff:ffff:ffff']);
     });
 
     test('test networkSize method', () => {

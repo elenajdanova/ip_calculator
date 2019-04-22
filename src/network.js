@@ -172,14 +172,17 @@ export default class Network extends IP {
     * @return {string} ->127.0.0.1
     */
     hostFirst () {
-        let isSmall4 = this.version === 4 && this.prefix > 30;
-        let isSmall6 = this.version === 6 && this.prefix > 126;
-        if (isSmall4 || isSmall6) {
-            return this.address;
+        let isSmall4 = this.version === 4 && this.prefix > 30n;
+        let first;
+
+        if (this.version === 6) {
+            first = this.getNetwork();
+        } else if (isSmall4) {
+            return 'N/A';
         } else {
-            let host = this.toDottedNotation(this.networkToInteger() + 1n);
-            return this.toCompressed (host, this.version);
+            first = this.toDottedNotation(this.networkToInteger() + 1n);
         }
+        return this.toCompressed( first, this.version );
     }
 
     /**
@@ -187,20 +190,22 @@ export default class Network extends IP {
     * @return {string} ->127.255.255.255
     */
     hostLast () {
-        let isLast4 = this.version === 4 && this.prefix === 32;
-        let isLast6 = this.version === 6 && this.prefix === 128;
-        let isPrev4 = this.version === 4 && this.prefix === 31;
-        let isPrev6 = this.version === 6 && this.prefix === 127;
+        let isLast4 = this.version === 4 && this.prefix === 32n;
+        let isLast6 = this.version === 6 && this.prefix === 128n;
+        let isPrev4 = this.version === 4 && this.prefix === 31n;
+        let isPrev6 = this.version === 6 && this.prefix === 127n;
+        let last;
 
-        if (isLast4 || isLast6) {
-            return this.address;
-        } else if (isPrev4 || isPrev6) {
-            return this.toDottedNotation(this.toInteger + 1n);
+        if (isLast4 || isLast6 || isPrev4) {
+            return 'N/A';
+        } else if (isPrev6) {
+            last = this.address;
         } else if (this.version === 4) {
-            return this.toDottedNotation(this.broadcastToLong() - 1n);
+            last = this.toDottedNotation(this.broadcastToLong() - 1n);
         } else {
-            return this.toDottedNotation(this.broadcastToLong());
+            last = this.toDottedNotation(this.broadcastToLong());
         }
+        return this.toCompressed( last, this.version );
     }
 
     /**
