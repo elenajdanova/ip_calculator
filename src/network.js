@@ -244,7 +244,13 @@ export default class Network extends IP {
     networkSize () {
         let marks = {4: 32n, 6: 128n};
         let size = 2n ** (marks[this.version] - this.prefix);
-        return (this.version === 4) ? size - 2n : size;
+
+        if (this.version === 4 && this.prefix > 30n) {
+            return 0;
+        } else if (this.version === 4) {
+            return size - 2n;
+        }
+        return size;
     }
 
 }

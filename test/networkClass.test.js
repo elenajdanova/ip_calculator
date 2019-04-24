@@ -278,11 +278,11 @@ describe('Valid, testing contains method to be false', () => {
 });
 
 describe('Valid, test networkSize method', () => {
-    const addr = ['192.168.98.2', '255.168.114.128', '1:dead::987',
+    const addr = ['192.168.98.2', '192.168.98.2', '255.168.114.128', '1:dead::987',
         '2:be::b3:0:2:3'];
-    const prefix = [6, 17, 99, 70];
-    const expected = [ BigInt('67108862'), BigInt('32766'),
-        BigInt('536870912'), BigInt('288230376151711744')];
+    const prefix = [32, 29, 31, 99, 70];
+    const expected = [ 0, BigInt('6'), 0, BigInt('536870912'),
+    BigInt('288230376151711744')];
 
     test(`returns ${expected[0]} nr of hosts for ${addr[0]}`, () => {
         const net = new Network(addr[0], prefix[0]);
@@ -302,6 +302,11 @@ describe('Valid, test networkSize method', () => {
     test(`returns ${expected[3]} nr of hosts for ${addr[3]}`, () => {
         const net = new Network(addr[3], prefix[3]);
         expect(net.networkSize()).toBe(expected[3]);
+    });
+
+    test(`returns ${expected[4]} nr of hosts for ${addr[4]}`, () => {
+        const net = new Network(addr[4], prefix[4]);
+        expect(net.networkSize()).toBe(expected[4]);
     });
 });
 
