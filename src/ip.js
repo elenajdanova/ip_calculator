@@ -118,23 +118,20 @@ export default class IP {
         } else {
             let splitted = addr.split(':');
             // removing longest zero group
-            let [startOfLongest, longestLength] = longestZerosGroup(splitted);
-
+            let [startOfLongest, longestLength] = _longestZerosGroup(splitted);
             splitted.splice(startOfLongest, longestLength, '');
             if (startOfLongest === 0) { splitted.unshift(''); }
+            if (startOfLongest + longestLength === 8) { splitted.push(''); }
 
-            // removing leading zeros
+            // removing '0000' and leading zeros
             loopHex:
             for (let i = 0; i < splitted.length; i++) {
                 if (splitted[i] === '0000') {
                     splitted.splice(i, 1, '0');
-                    if ( splitted.length - 1 !== i ) {
-                        i++;
-                    }
                 }
                 loopStr:
                 for (let j = 0; j < splitted[i].length; j++) {
-                    if (splitted[i][j] === '0') {
+                    if (splitted[i][j] === '0' && splitted[i] !== '0') {
                         splitted[i] = splitted[i].substring(j+1);
                         j--;
                         continue;
@@ -345,21 +342,23 @@ export default class IP {
  * @param  {array} zeros
  * @return {array} -> [0, 7]
  */
-const longestZerosGroup = (splittedAddr) => {
-    let current = 0;
-    let currentLongest = 0;
+const _longestZerosGroup = (splittedAddr) => {
+    let curr = 0;
+    let currLongest = 0;
     let startOfLongest = 0;
-    while (current < splittedAddr.length - 2) {
-        let startOfRun = current;
-        while (current < splittedAddr.length - 1 &&
-            splittedAddr[current] === '0000') {
-            current++;
+
+    while (curr < splittedAddr.length-2) {
+        let startOfRun = curr;
+        let notEnd = curr < splittedAddr.length;
+        while (notEnd && splittedAddr[curr] === '0000') {
+            curr++;
         }
-        if (current - startOfRun > currentLongest) {
+
+        if ((curr - startOfRun) > currLongest) {
             startOfLongest = startOfRun;
-            currentLongest = current - startOfRun;
+            currLongest = curr - startOfRun;
         }
-        current++;
+        curr++;
     }
-    return [startOfLongest, currentLongest];
+    return [startOfLongest, currLongest];
 };
