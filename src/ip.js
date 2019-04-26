@@ -198,6 +198,14 @@ export default class IP {
             6: [':', this._isIPv6, 8]
         };
         let splittedAddr = addr.split( marks[v][0] );
+
+        if (v === 6 && splittedAddr.length < 8) {
+            let dbColon = (addr.match(/::/g)||[]).length;
+            if (dbColon !== 1) {
+                throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
+            }
+        }
+
         if ( marks[v][1].call(this, splittedAddr) ) { //TODO: make ifs more readable
             if (splittedAddr.length === marks[v][2] && this.short === 0) {
                 return addr;

@@ -257,7 +257,7 @@ describe('IPv6, testing toHex method', () => {
 });
 
 describe('Invalid IPv6, testing validation methods', () => {
-    const testAddr = [':', 'fahy:0001', 'beef:::', undefined, null, ''];
+    const testAddr = [':', 'fahy:0001', 'beef:::', undefined, null, '', 'abc:67'];
     for (let i = 0; i < testAddr.length; i++) {
         test(`${testAddr[i]} throws error`, () => {
             function addressError() {
