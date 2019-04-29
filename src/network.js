@@ -129,6 +129,14 @@ export default class Network extends IP {
     }
 
     /**
+    * getMask - Returns mask from the prefix
+    * @return {string} -> 255.255.0.0
+    */
+    getMask () {
+        return this.toDottedNotation(this.maskToInteger());
+    }
+
+    /**
     * networkToInteger - Returns network as bigInt.
     * @return {BigInt} -> 21307064320
     */
