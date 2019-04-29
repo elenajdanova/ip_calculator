@@ -112,7 +112,7 @@ export default class Network extends IP {
               results.unshift(info[1]);
           }
       }
-      return results.length === 0 ? 'UNKNOWN' : results[0];
+      return results.length === 0 ? 'Unknown' : results[0];
     }
 
     /**
@@ -245,9 +245,7 @@ export default class Network extends IP {
         let marks = {4: 32n, 6: 128n};
         let size = 2n ** (marks[this.version] - this.prefix);
 
-        if (this.version === 4 && this.prefix > 30n) {
-            return 0;
-        } else if (this.version === 4) {
+        if (this.version === 4 && this.prefix < 30n) {
             return size - 2n;
         }
         return size;

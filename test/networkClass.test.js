@@ -61,8 +61,8 @@ describe('Valid, testing printInfo method', () => {
     address              |prefix   | expected
     ${'192.168.98.2'}    | ${15}   | ${'Private Use'}
     ${'255.168.114.128'} | ${17}   | ${'Reserved'}
-    ${'1:dead::987'}     | ${99}   | ${'UNKNOWN'}
-    ${'2:be::b3:0:2:3'}  | ${70}   | ${'UNKNOWN'}
+    ${'1:dead::987'}     | ${99}   | ${'Unknown'}
+    ${'2:be::b3:0:2:3'}  | ${70}   | ${'Unknown'}
     `('returns $expected network for ip $address',({address, prefix, expected}) => {
     const net = new Network(address, prefix);
     expect(net.printInfo()).toEqual(expected);
@@ -281,7 +281,7 @@ describe('Valid, test networkSize method', () => {
     const addr = ['192.168.98.2', '192.168.98.2', '255.168.114.128', '1:dead::987',
         '2:be::b3:0:2:3'];
     const prefix = [32, 29, 31, 99, 70];
-    const expected = [ 0, BigInt('6'), 0, BigInt('536870912'),
+    const expected = [ BigInt('1'), BigInt('6'), BigInt('2'), BigInt('536870912'),
     BigInt('288230376151711744')];
 
     test(`returns ${expected[0]} nr of hosts for ${addr[0]}`, () => {
