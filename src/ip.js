@@ -1,4 +1,5 @@
-import { IPv4MAX, IPv6MAX } from '../index.js';
+const IPv4MAX = (2n ** 32n) - 1n;
+const IPv6MAX = (2n ** 128n) - 1n;
 
 /**
 * Represents a single IP address v4 or v6.
@@ -117,23 +118,20 @@ export default class IP {
         } else {
             let splitted = addr.split(':');
             // removing longest zero group
-            let [startOfLongest, longestLength] = longestZerosGroup(splitted);
-
+            let [startOfLongest, longestLength] = _longestZerosGroup(splitted);
             splitted.splice(startOfLongest, longestLength, '');
             if (startOfLongest === 0) { splitted.unshift(''); }
+            if (startOfLongest + longestLength === 8) { splitted.push(''); }
 
-            // removing leading zeros
+            // removing '0000' and leading zeros
             loopHex:
             for (let i = 0; i < splitted.length; i++) {
                 if (splitted[i] === '0000') {
                     splitted.splice(i, 1, '0');
-                    if ( splitted.length - 1 !== i ) {
-                        i++;
-                    }
                 }
                 loopStr:
                 for (let j = 0; j < splitted[i].length; j++) {
-                    if (splitted[i][j] === '0') {
+                    if (splitted[i][j] === '0' && splitted[i] !== '0') {
                         splitted[i] = splitted[i].substring(j+1);
                         j--;
                         continue;
@@ -157,16 +155,17 @@ export default class IP {
     */
     _checkVersion (addr) {
         //matches all possible chars in both versions of IP
-        const reGen = /^[0-9a-fn.:]+$/i;
+        const reGen = /^[0-9a-f.:]+$/i;
         if ( reGen.test(addr) ) {
             //checks if there is .. and more or whole IP is just a dot
             const reDots = /\.{2,}|^\.{1}$/;
             //checks if there is ::: and more or whole IP is just a colon
             const reColon = /:{3,}|^:{1}$/;
-            //checks if there is only digits and n in bigInt IP
-            const reNum = /^[0-9n]+$/;
+            //checks if there is only digits in integer IP
+            const reNum = /^[0-9]+$/;
 
             if ( reNum.test(addr) ) {
+                addr = BigInt(addr);
                 if (addr > IPv6MAX || addr <= 0) {
                     throw new Error('Tips: IP address cant be bigger than 2 to the 128-th power or negative number');
                 } else if (addr <= IPv4MAX) {
@@ -190,8 +189,8 @@ export default class IP {
     _checkAddress (addr, v) {
         const reNum = /^[0-9]+$/;
         if ( reNum.test(addr) ) {
-            this.integer = addr;
-            return this.toDottedNotation(addr);
+            this.integer = BigInt(addr);
+            return this.toDottedNotation(this.integer);
         }
 
         const marks = {
@@ -199,6 +198,14 @@ export default class IP {
             6: [':', this._isIPv6, 8]
         };
         let splittedAddr = addr.split( marks[v][0] );
+
+        if (v === 6 && splittedAddr.length < 8) {
+            let dbColon = (addr.match(/::/g)||[]).length;
+            if (dbColon !== 1) {
+                throw new Error('Tips: Please, enter a valid IP address (Like "127.1.0.0", long integer, short or long IPv6)');
+            }
+        }
+
         if ( marks[v][1].call(this, splittedAddr) ) { //TODO: make ifs more readable
             if (splittedAddr.length === marks[v][2] && this.short === 0) {
                 return addr;
@@ -343,25 +350,23 @@ export default class IP {
  * @param  {array} zeros
  * @return {array} -> [0, 7]
  */
-const longestZerosGroup = (splittedAddr) => {
-    let current = 0;
-    let currentLongest = 0;
+const _longestZerosGroup = (splittedAddr) => {
+    let curr = 0;
+    let currLongest = 0;
     let startOfLongest = 0;
-    while (current < splittedAddr.length - 2) {
-        let startOfRun = current;
-        while (current < splittedAddr.length - 1 &&
-              splittedAddr[current] === '0000') {
-            current++;
+
+    while (curr < splittedAddr.length-2) {
+        let startOfRun = curr;
+        let notEnd = curr < splittedAddr.length;
+        while (notEnd && splittedAddr[curr] === '0000') {
+            curr++;
         }
-        if (current - startOfRun > currentLongest) {
+
+        if ((curr - startOfRun) > currLongest) {
             startOfLongest = startOfRun;
-            currentLongest = current - startOfRun;
+            currLongest = curr - startOfRun;
         }
-        current++;
+        curr++;
     }
-    return [startOfLongest, currentLongest];
+    return [startOfLongest, currLongest];
 };
-
-
-// console.log( ip = new IP('2002:babe::abc:2:3') );
-// console.log(ip.toInteger());

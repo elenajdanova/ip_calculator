@@ -1,6 +1,7 @@
 import IP from './ip.js';
-import { IPv4MAX, IPv6MAX } from '../index.js';
 
+const IPv4MAX = (2n ** 32n) - 1n;
+const IPv6MAX = (2n ** 128n) - 1n;
 
 //IP range specific information, see IANA allocations.
 // http://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml
@@ -22,7 +23,7 @@ let _ipv4Registry = new Map([
     ['192.31.196.0', [24, 'AS112-v4']],
     ['192.52.193.0', [24, 'AMT']],
     ['192.88.99.0', [24, 'Deprecated (6to4 Relay Anycast)']],
-    ['192.168.0.0', [16, 'Private-Use']],
+    ['192.168.0.0', [16, 'Private Use']],
     ['192.175.48.0', [24, 'Direct Delegation AS112 Service']],
     ['198.18.0.0', [15, 'Benchmarking']],
     ['198.51.100.0', [24, 'Documentation (TEST-NET-2)']],
@@ -33,7 +34,6 @@ let _ipv4Registry = new Map([
 
 //https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml
 let _ipv6Registry = new Map([
-    ['255.255.255.255', [32, 'Limited Broadcast']],
     ['::1', [128, 'Loopback Address']],
     ['::', [128, 'Unspecified Address']],
     ['::', [128, 'Unspecified Address']],
@@ -104,12 +104,15 @@ export default class Network extends IP {
     * @return {string} ->LOOPBACK
     */
     printInfo () {
-      let registry = {4: _ipv4Registry, 6: _ipv6Registry}
+      let registry = {4: _ipv4Registry, 6: _ipv6Registry};
+      let results = [];
       for (let [addr, info] of registry[this.version].entries()) {
           let found = this.contains(this.address, addr, info[0]);
-          if (found) { return info[1]; }
+          if (found) {
+              results.unshift(info[1]);
+          }
       }
-      return 'UNKNOWN';
+      return results.length === 0 ? 'Unknown' : results[0];
     }
 
     /**
@@ -126,6 +129,14 @@ export default class Network extends IP {
     }
 
     /**
+    * getMask - Returns mask from the prefix
+    * @return {string} -> 255.255.0.0
+    */
+    getMask () {
+        return this.toDottedNotation(this.maskToInteger());
+    }
+
+    /**
     * networkToInteger - Returns network as bigInt.
     * @return {BigInt} -> 21307064320
     */
@@ -138,16 +149,18 @@ export default class Network extends IP {
     * @return {string} -> 127
     */
     getNetwork () {
-        let network = this.toDottedNotation(this.networkToInteger());
-        return this.toCompressed(network, this.version);
+        return this.toDottedNotation(this.networkToInteger());
     }
 
     /**
-    * getBroadcast - Calculates broadcast.IPv6 doesn't have a broadcast address, but it's used for other calculations such as Network.hostLast.
+    * getBroadcast - Calculates broadcast.IPv6 doesn't have a broadcast
+    * address, but it's used for other calculations such as Network.hostLast.
     * @return {string} -> 127.255.255.255
     */
     getBroadcast () {
-        return this.toDottedNotation(this.broadcastToLong());
+        return this.version === 4 ?
+        this.toDottedNotation(this.broadcastToLong()) :
+        'IPv6 doesnt have broadcast address';
     }
 
     /**
@@ -167,14 +180,17 @@ export default class Network extends IP {
     * @return {string} ->127.0.0.1
     */
     hostFirst () {
-        let isSmall4 = this.version === 4 && this.prefix > 30;
-        let isSmall6 = this.version === 6 && this.prefix > 126;
-        if (isSmall4 || isSmall6) {
-            return this.address;
+        let isSmall4 = this.version === 4 && this.prefix > 30n;
+        let first;
+
+        if (this.version === 6) {
+            first = this.getNetwork();
+        } else if (isSmall4) {
+            return 'N/A';
         } else {
-            let host = this.toDottedNotation(this.networkToInteger() + 1n);
-            return this.toCompressed (host, this.version);
+            first = this.toDottedNotation(this.networkToInteger() + 1n);
         }
+        return this.toCompressed( first, this.version );
     }
 
     /**
@@ -182,20 +198,22 @@ export default class Network extends IP {
     * @return {string} ->127.255.255.255
     */
     hostLast () {
-        let isLast4 = this.version === 4 && this.prefix === 32;
-        let isLast6 = this.version === 6 && this.prefix === 128;
-        let isPrev4 = this.version === 4 && this.prefix === 31;
-        let isPrev6 = this.version === 6 && this.prefix === 127;
+        let isLast4 = this.version === 4 && this.prefix === 32n;
+        let isLast6 = this.version === 6 && this.prefix === 128n;
+        let isPrev4 = this.version === 4 && this.prefix === 31n;
+        let isPrev6 = this.version === 6 && this.prefix === 127n;
+        let last;
 
-        if (isLast4 || isLast6) {
-            return this.address;
-        } else if (isPrev4 || isPrev6) {
-            return this.toDottedNotation(this.toInteger + 1n);
+        if (isLast4 || isLast6 || isPrev4) {
+            return 'N/A';
+        } else if (isPrev6) {
+            last = this.address;
         } else if (this.version === 4) {
-            return this.toDottedNotation(this.broadcastToLong() - 1n);
+            last = this.toDottedNotation(this.broadcastToLong() - 1n);
         } else {
-            return this.toDottedNotation(this.broadcastToLong());
+            last = this.toDottedNotation(this.broadcastToLong());
         }
+        return this.toCompressed( last, this.version );
     }
 
     /**
@@ -234,7 +252,11 @@ export default class Network extends IP {
     networkSize () {
         let marks = {4: 32n, 6: 128n};
         let size = 2n ** (marks[this.version] - this.prefix);
-        return (this.version === 4) ? size - 2n : size;
+
+        if (this.version === 4 && this.prefix < 30n) {
+            return size - 2n;
+        }
+        return size;
     }
 
-} // end Network class
+}

@@ -204,7 +204,10 @@ describe('IPv6, testing toCompressed method', () => {
     ${'2002:babe:0000:0000:47b3:0000:0002:0013'} | ${'2002:babe::47b3:0:2:13'}
     ${'0000:0000:0000:0000:0000:c01a:abcd:0987'} | ${'::c01a:abcd:987'}
     ${'0ace:00cd:f987:0000:0000:0000:0000:0000'} | ${'ace:cd:f987::'}
+    ${'2003:0000:f987:0007:0003:0000:0000:0000'} | ${'2003:0:f987:7:3::'}
+    ${'2010:0db8:0000:0000:0000:0000:0000:0001'} | ${'2010:db8::1'}
     ${'1ace:00cd:f987:0000:0e57:0000:0006:0010'} | ${'1ace:cd:f987::e57:0:6:10'}
+    ${'2001:0db8:0000:0000:0000:ff00:0042:0000'} | ${'2001:db8::ff00:42:0'}
     `('returns $expected short representation of $address',({address, expected}) => {
     const ip = new IP(address);
     expect(ip.toCompressed(ip.address, ip.version)).toBe(expected);
@@ -254,7 +257,7 @@ describe('IPv6, testing toHex method', () => {
 });
 
 describe('Invalid IPv6, testing validation methods', () => {
-    const testAddr = [':', 'fahy:0001', 'beef:::', undefined, null, ''];
+    const testAddr = [':', 'fahy:0001', 'beef:::', undefined, null, '', 'abc:67'];
     for (let i = 0; i < testAddr.length; i++) {
         test(`${testAddr[i]} throws error`, () => {
             function addressError() {
@@ -297,7 +300,7 @@ describe('IPv6, valid, testing ALL methods', () => {
 
 describe('IPv4, valid integer, testing validation methods', () => {
     const expected = ['101.200.57.0', '255.255.0.0', '0.0.0.192', '0.1.116.233'];
-    const addr = [ BigInt('1707620608'), BigInt('4294901760'), BigInt('192'), BigInt('95465')];
+    const addr = [1707620608 , BigInt('4294901760'), BigInt('192'), 95465];
 
     test(`returns ${expected[0]} for ${addr[0]}`, () => {
         const ip = new IP(addr[0]);
