@@ -1,0 +1,45 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>IP Calculator</title>
+  <meta name="description" content="IP Calculator">
+  <meta name="Elena Jdanova">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.css"/>
+  <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+
+<body>
+  <div class="ui container ui segment">
+      <h1 class="header">IP calculator</h1>
+      <p> This is simple UI for all vanilla Javascript IP Calculator - no backend or dependencies at all! If you find any bugs or have feedback, submit an issue or drop me an email. Good luck and have fun!</p>
+      <br/>
+
+      <form class="ui form">
+          <div class="fields">
+          <div class="seven wide field in">
+              <div class="ui labeled input">
+                  <div class="ui label"> IP </div>
+                  <input type="text" id="inIP" placeholder="x.x.x.x or y:y:y:y:y:y:y:y or integer or short">
+              </div>
+          </div>
+          <p class="slash">/</p>
+          <div style="width: 75px; height: 37.33px;" class="field in">
+                <input type="text" id="inMask" placeholder="mask">
+          </div>
+          &emsp;
+          <button class="ui olive button" id="calcBtn">Calculate</button>
+          </div>
+      </form>
+      <div style="color:#9F3A38;" id="errorDiv"></div>
+
+      <br/>
+      <table class="ui very basic collapsing celled table" id="result">
+          <tbody id="tbody"></tbody>
+      </table>
+  </div>
+
+  <script type="module" src="./index.js"></script>
+</body>
+</html>
