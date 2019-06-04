@@ -1,0 +1,22 @@
+body{
+   min-width:850px !important;
+   width: auto !important;
+   width:850px;
+}
+
+p {
+  font-size: 16px;
+}
+
+p.slash {
+  font-size: 26px;
+  margin-bottom: 0em;
+}
+
+.ui.basic.table td {
+  padding-left: 11px !important;
+}
+
+.ui.basic.table td:first-child {
+  font-weight: bold !important;
+}
