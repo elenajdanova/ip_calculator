@@ -1,4 +1,6 @@
 body{
+  -webkit-box-sizing: border-box;
+   box-sizing: border-box;
    min-width:850px !important;
    width: auto !important;
    width:850px;
@@ -19,4 +21,16 @@ p.slash {
 
 .ui.basic.table td:first-child {
   font-weight: bold !important;
+}
+
+.inline {
+  vertical-align: middle;
+}
+
+#inMask {
+  width: 70px;
+}
+
+.ui.form .fields .field .ui.input input, .ui.form .field .ui.input input {
+    width: 300px !important;
 }
