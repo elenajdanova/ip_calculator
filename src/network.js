@@ -1,7 +1,8 @@
+/* global BigInt */
 import IP from './ip.js';
 
-const IPv4MAX = (2n ** 32n) - 1n;
-const IPv6MAX = (2n ** 128n) - 1n;
+const IPv4MAX = (BigInt(2) ** BigInt(32)) - BigInt(1);
+const IPv6MAX = (BigInt(2) ** BigInt(128)) - BigInt(1);
 
 //IP range specific information, see IANA allocations.
 // http://www.iana.org/assignments/iana-ipv4-special-registry/iana-ipv4-special-registry.xhtml
@@ -121,10 +122,10 @@ export default class Network extends IP {
     */
     maskToInteger () {
         if (this.version == 4) {
-            return (IPv4MAX >> (32n - this.prefix)) << (32n - this.prefix);
+            return (IPv4MAX >> (BigInt(32) - this.prefix)) << (BigInt(32) - this.prefix);
         }
         else {
-            return (IPv6MAX >> (128n - this.prefix)) << (128n - this.prefix);
+            return (IPv6MAX >> (BigInt(128) - this.prefix)) << (BigInt(128) - this.prefix);
         }
     }
 
@@ -180,7 +181,7 @@ export default class Network extends IP {
     * @return {string} ->127.0.0.1
     */
     hostFirst () {
-        let isSmall4 = this.version === 4 && this.prefix > 30n;
+        let isSmall4 = this.version === 4 && this.prefix > BigInt(30);
         let first;
 
         if (this.version === 6) {
@@ -188,7 +189,7 @@ export default class Network extends IP {
         } else if (isSmall4) {
             return 'N/A';
         } else {
-            first = this.toDottedNotation(this.networkToInteger() + 1n);
+            first = this.toDottedNotation(this.networkToInteger() + BigInt(1));
         }
         return this.toCompressed( first, this.version );
     }
@@ -198,10 +199,10 @@ export default class Network extends IP {
     * @return {string} ->127.255.255.255
     */
     hostLast () {
-        let isLast4 = this.version === 4 && this.prefix === 32n;
-        let isLast6 = this.version === 6 && this.prefix === 128n;
-        let isPrev4 = this.version === 4 && this.prefix === 31n;
-        let isPrev6 = this.version === 6 && this.prefix === 127n;
+        let isLast4 = this.version === 4 && this.prefix === BigInt(32);
+        let isLast6 = this.version === 6 && this.prefix === BigInt(128);
+        let isPrev4 = this.version === 4 && this.prefix === BigInt(31);
+        let isPrev6 = this.version === 6 && this.prefix === BigInt(127);
         let last;
 
         if (isLast4 || isLast6 || isPrev4) {
@@ -209,7 +210,7 @@ export default class Network extends IP {
         } else if (isPrev6) {
             last = this.address;
         } else if (this.version === 4) {
-            last = this.toDottedNotation(this.broadcastToLong() - 1n);
+            last = this.toDottedNotation(this.broadcastToLong() - BigInt(1));
         } else {
             last = this.toDottedNotation(this.broadcastToLong());
         }
@@ -250,11 +251,11 @@ export default class Network extends IP {
     * @return {number} -> 16777214
     */
     networkSize () {
-        let marks = {4: 32n, 6: 128n};
-        let size = 2n ** (marks[this.version] - this.prefix);
+        let marks = {4: BigInt(32), 6: BigInt(128)};
+        let size = BigInt(2) ** (marks[this.version] - this.prefix);
 
-        if (this.version === 4 && this.prefix < 30n) {
-            return size - 2n;
+        if (this.version === 4 && this.prefix < BigInt(30)) {
+            return size - BigInt(2);
         }
         return size;
     }
