@@ -1,5 +1,7 @@
-const IPv4MAX = (2n ** 32n) - 1n;
-const IPv6MAX = (2n ** 128n) - 1n;
+/* global BigInt */
+
+const IPv4MAX = (BigInt(2) ** BigInt(32)) - BigInt(1);
+const IPv6MAX = (BigInt(2) ** BigInt(128)) - BigInt(1);
 
 /**
 * Represents a single IP address v4 or v6.
@@ -49,9 +51,9 @@ export default class IP {
     toDottedNotation(bigInt) {
         if (this.version === 4) {
             return (
-                [ (bigInt>>24n & 255n), (bigInt>>16n & 255n),
-                  (bigInt>>8n & 255n),
-                    (bigInt & 255n)
+                [ (bigInt>>BigInt(24) & BigInt(255)), (bigInt>>BigInt(16) & BigInt(255)),
+                  (bigInt>>BigInt(8) & BigInt(255)),
+                    (bigInt & BigInt(255))
                 ].join('.')
             );
         } else {
