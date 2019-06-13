@@ -52,7 +52,7 @@ export default class IP {
         if (this.version === 4) {
             return (
                 [ (bigInt>>BigInt(24) & BigInt(255)), (bigInt>>BigInt(16) & BigInt(255)),
-                  (bigInt>>BigInt(8) & BigInt(255)),
+                    (bigInt>>BigInt(8) & BigInt(255)),
                     (bigInt & BigInt(255))
                 ].join('.')
             );
@@ -119,18 +119,22 @@ export default class IP {
             }
         } else {
             let splitted = addr.split(':');
-            // removing longest zero group
+            // finding longest zero group
             let [startOfLongest, longestLength] = _longestZerosGroup(splitted);
-            splitted.splice(startOfLongest, longestLength, '');
-            if (startOfLongest === 0) { splitted.unshift(''); }
-            if (startOfLongest + longestLength === 8) { splitted.push(''); }
+            // 'N/A' - _longestZerosGroup fn return in case if there is NO
+            // '0000' blocks in address
+            if (startOfLongest !== 'N/A' || longestLength !== 'N/A') {
+                splitted.splice(startOfLongest, longestLength, '');
+                if (startOfLongest === 0) { splitted.unshift(''); }
+                if (startOfLongest + longestLength === 8) { splitted.push(''); }
+            }
 
-            // removing '0000' and leading zeros
-            loopHex:
+            // removing single '0000' blocks and leading zeros
             for (let i = 0; i < splitted.length; i++) {
                 if (splitted[i] === '0000') {
                     splitted.splice(i, 1, '0');
                 }
+
                 loopStr:
                 for (let j = 0; j < splitted[i].length; j++) {
                     if (splitted[i][j] === '0' && splitted[i] !== '0') {
@@ -356,11 +360,13 @@ const _longestZerosGroup = (splittedAddr) => {
     let curr = 0;
     let currLongest = 0;
     let startOfLongest = 0;
+    let hasZeros = false;
 
     while (curr < splittedAddr.length-2) {
         let startOfRun = curr;
         let notEnd = curr < splittedAddr.length;
         while (notEnd && splittedAddr[curr] === '0000') {
+            hasZeros = true;
             curr++;
         }
 
@@ -370,5 +376,5 @@ const _longestZerosGroup = (splittedAddr) => {
         }
         curr++;
     }
-    return [startOfLongest, currLongest];
+    return hasZeros ? [startOfLongest, currLongest] : ['N/A', 'N/A'];
 };
