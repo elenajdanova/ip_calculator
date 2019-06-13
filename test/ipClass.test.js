@@ -208,6 +208,8 @@ describe('IPv6, testing toCompressed method', () => {
     ${'2010:0db8:0000:0000:0000:0000:0000:0001'} | ${'2010:db8::1'}
     ${'1ace:00cd:f987:0000:0e57:0000:0006:0010'} | ${'1ace:cd:f987::e57:0:6:10'}
     ${'2001:0db8:0000:0000:0000:ff00:0042:0000'} | ${'2001:db8::ff00:42:0'}
+    ${'73c3:ce46:a0b2:bb22:dd00:463a:dc9e:69f4'} | ${'73c3:ce46:a0b2:bb22:dd00:463a:dc9e:69f4'}
+    ${'73c3:ce46:a0b2:bb22:dd00:063a:009e:0004'} | ${'73c3:ce46:a0b2:bb22:dd00:63a:9e:4'}
     `('returns $expected short representation of $address',({address, expected}) => {
     const ip = new IP(address);
     expect(ip.toCompressed(ip.address, ip.version)).toBe(expected);
